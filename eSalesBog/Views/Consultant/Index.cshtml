@@ -4,61 +4,72 @@
     ViewBag.Title = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
-<h2>Index</h2>
+<h3>კონსულტანტები</h3>
 
 <p>
-    @Html.ActionLink("Create New", "Create")
+    <a class="btn btn-white btn-sm" href="@Url.Action("Create", "Consultant")">
+        <i class="fa fa-plus"></i>&nbsp;ახლის დამატება
+    </a>
 </p>
-<table class="table">
+<table class="table table-hover table-responsive">
     <tr>
         <th>
-           სახელი
+            სახელი
         </th>
         <th>
-           გვარი
+            გვარი
         </th>
         <th>
-           პირადი ნომერი
+            პირადი ნომერი
         </th>
         <th>
             სქესი
         </th>
         <th>
-           დაბადების თარიღი
+            დაბადების თარიღი
         </th>
         <th>
-           
+
         </th>
         <th></th>
     </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.FirstName)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.LastName)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.PersonalNumber)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Gender)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.BirthDate)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.RecommenderConsultantID)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.ID }) |
-            @Html.ActionLink("Details", "Details", new { id=item.ID }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.ID })
-        </td>
-    </tr>
-}
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.FirstName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LastName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PersonalNumber)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Gender)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.BirthDate.Value.Date)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.RecommenderConsultantID)
+            </td>
+            <td>
+                <a class="btn btn-white btn-sm" href="@Url.Action("Edit", "Consultant", new { id = item.ID })">
+                    <i class="fa fa-pencil"></i>&nbsp;რედაქტირება
+                </a>
+                @*@Html.ActionLink("Edit", "Edit", new { id=item.ID })*@ |
+                <a class="btn btn-white btn-sm" href="@Url.Action("Details", "Consultant", new { id = item.ID })">
+                    <i class="fa fa-eye"></i>&nbsp;დათვალიერება
+                </a>
+                @*@Html.ActionLink("Details", "Details", new { id=item.ID })*@ |
+                <a class="btn btn-white btn-sm" href="@Url.Action("Delete", "Consultant", new { id = item.ID })">
+                    <i class="fa fa-trash"></i>&nbsp;წაშლა
+                </a>
+                @*@Html.ActionLink("Delete", "Delete", new { id=item.ID })*@
+            </td>
+        </tr>
+    }
 
 </table>

@@ -22,6 +22,7 @@ namespace eSalesBog.Models
             public int? Gender { get; set; }
             [Display(Name = "დაბადების თარიღი")]
             public DateTime? BirthDate { get; set; }
+            [Display(Name = "რეკომენდატორი")]
             public int? RecommenderConsultantID { get; set; }
             public List<ConsultantViewModel> RecommenderConsultant { get; set; }
         }

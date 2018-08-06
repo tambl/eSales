@@ -9,12 +9,19 @@ using System.Web.Mvc;
 using DAL.Context;
 using eSalesBog.DTOs;
 using static eSalesBog.Models.SalesViewModels;
+using Common.Enums;
 
 namespace eSalesBog.Controllers
 {
     public class ConsultantController : Controller
     {
-        private SalesBogEntities db = new SalesBogEntities();
+        private SalesBogEntities db;
+
+        public ConsultantController()
+        {
+
+            db = new SalesBogEntities();
+        }
 
         // GET: Consultant
         public ActionResult Index()
@@ -26,7 +33,11 @@ namespace eSalesBog.Controllers
                 consultants.Add(new ConsultantViewModel
                 {
                     FirstName = item.FirstName,
-                    LastName=item.LastName
+                    LastName = item.LastName,
+                    Gender = item.Gender,
+                    BirthDate = item.BirthDate.Value.Date,
+                    ID = item.ID,
+                    PersonalNumber = item.PersonalNumber
                 });
             }
             return View(consultants);
@@ -40,7 +51,7 @@ namespace eSalesBog.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             var dbConsultant = db.Consultants.Find(id);
-            ConsultantDto consultantDto = new ConsultantDto { FirstName = dbConsultant.FirstName, LastName = dbConsultant.LastName };
+            ConsultantViewModel consultantDto = new ConsultantViewModel { FirstName = dbConsultant.FirstName, LastName = dbConsultant.LastName, PersonalNumber = dbConsultant.PersonalNumber };
             if (consultantDto == null)
             {
                 return HttpNotFound();
@@ -51,6 +62,7 @@ namespace eSalesBog.Controllers
         // GET: Consultant/Create
         public ActionResult Create()
         {
+            GetRecommenderConsultants();
             return View();
         }
 
@@ -59,31 +71,50 @@ namespace eSalesBog.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "ID,FirstName,LastName,PersonalNumber,Gender,BirthDate,RecommenderConsultantID")] ConsultantDto consultantDto)
+        public ActionResult Create([Bind(Include = "ID,FirstName,LastName,PersonalNumber,Gender,BirthDate,RecommenderConsultantID")] ConsultantViewModel consultant)
         {
             if (ModelState.IsValid)
             {
-                //db.Consultants.Add(consultantDto);
-                //db.SaveChanges();
+                db.Consultants.Add(new Consultants
+                {
+                    FirstName = consultant.FirstName,
+                    LastName = consultant.LastName,
+                    BirthDate = consultant.BirthDate,
+                    PersonalNumber = consultant.PersonalNumber,
+                    Gender = consultant.Gender,
+                    RecommenderConsultantID = consultant.RecommenderConsultantID
+                });
+                db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
-            return View(consultantDto);
+            return View(consultant);
         }
 
         // GET: Consultant/Edit/5
         public ActionResult Edit(int? id)
         {
+            GetRecommenderConsultants();
+
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            ConsultantDto consultantDto = null; //db.ConsultantDtoes.Find(id);
-            if (consultantDto == null)
+            var consultant = db.Consultants.Find(id);
+            ConsultantViewModel consultantModel = new ConsultantViewModel
+            {
+                FirstName = consultant.FirstName,
+                LastName = consultant.LastName,
+                BirthDate = consultant.BirthDate,
+                PersonalNumber = consultant.PersonalNumber,
+                Gender = consultant.Gender,
+                RecommenderConsultantID = consultant.RecommenderConsultantID
+            };
+            if (consultantModel == null)
             {
                 return HttpNotFound();
             }
-            return View(consultantDto);
+            return View(consultantModel);
         }
 
         // POST: Consultant/Edit/5
@@ -91,15 +122,22 @@ namespace eSalesBog.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "ID,FirstName,LastName,PersonalNumber,Gender,BirthDate,RecommenderConsultantID")] ConsultantDto consultantDto)
+        public ActionResult Edit([Bind(Include = "ID,FirstName,LastName,PersonalNumber,Gender,BirthDate,RecommenderConsultantID")] ConsultantViewModel consultant)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(consultantDto).State = EntityState.Modified;
+                //db.Entry(consultant).State = EntityState.Modified;
+                var dbConsultant = db.Consultants.Where(s => s.ID == consultant.ID).FirstOrDefault();
+                dbConsultant.FirstName = consultant.FirstName;
+                dbConsultant.LastName = consultant.LastName;
+                dbConsultant.Gender = consultant.Gender;
+                dbConsultant.BirthDate = consultant.BirthDate;
+                dbConsultant.RecommenderConsultantID = consultant.RecommenderConsultantID;
+                dbConsultant.PersonalNumber = consultant.PersonalNumber;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            return View(consultantDto);
+            return View(consultant);
         }
 
         // GET: Consultant/Delete/5
@@ -109,12 +147,23 @@ namespace eSalesBog.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            ConsultantDto consultantDto = null;//db.ConsultantDtoes.Find(id);
-            if (consultantDto == null)
+
+            var consultant = db.Consultants.Find(id);
+            ConsultantViewModel consultantModel = new ConsultantViewModel
+            {
+                FirstName = consultant.FirstName,
+                LastName = consultant.LastName,
+                BirthDate = consultant.BirthDate,
+                PersonalNumber = consultant.PersonalNumber,
+                Gender = consultant.Gender,
+                RecommenderConsultantID = consultant.RecommenderConsultantID
+            };
+           
+            if (consultantModel == null)
             {
                 return HttpNotFound();
             }
-            return View(consultantDto);
+            return View(consultantModel);
         }
 
         // POST: Consultant/Delete/5
@@ -122,8 +171,8 @@ namespace eSalesBog.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            ConsultantDto consultantDto = null;// db.ConsultantDtoes.Find(id);
-            //db.ConsultantDtoes.Remove(consultantDto);
+            Consultants consultant =  db.Consultants.Find(id);
+            db.Consultants.Remove(consultant);
             db.SaveChanges();
             return RedirectToAction("Index");
         }
@@ -135,6 +184,26 @@ namespace eSalesBog.Controllers
                 db.Dispose();
             }
             base.Dispose(disposing);
+        }
+
+        public void GetRecommenderConsultants()
+        {
+            List<ConsultantViewModel> result1 = new List<ConsultantViewModel>();
+
+            var dbConsultants = db.Consultants.ToList();
+            List<SelectListItem> consultants = new List<SelectListItem>();
+            foreach (var item in dbConsultants)
+            {
+                consultants.Add(new SelectListItem
+                {
+                    Value = item.ID.ToString(),
+                    Text = item.PersonalNumber + " " + item.FirstName + " " + item.LastName
+                });
+            }
+
+
+            ViewData["RecommenderConsultants"] = consultants;
+
         }
     }
 }
