@@ -6,27 +6,27 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
-using DAL.Context;
-using eSalesBog.DTOs;
 using static eSalesBog.Models.SalesViewModels;
 using Common.Enums;
+using Services.ServiceAbstract;
+using Services.DTOs;
 
 namespace eSalesBog.Controllers
 {
     public class ConsultantController : Controller
     {
-        private SalesBogEntities db;
 
-        public ConsultantController()
+        private ISalesService _serviceClient;
+
+        public ConsultantController(ISalesService serviceClient)
         {
-
-            db = new SalesBogEntities();
+            _serviceClient = serviceClient;
         }
 
         // GET: Consultant
         public ActionResult Index()
         {
-            var dbConsultants = db.Consultants.ToList();
+            var dbConsultants = _serviceClient.GetConsultants();
             List<ConsultantViewModel> consultants = new List<ConsultantViewModel>();
             foreach (var item in dbConsultants)
             {
@@ -50,7 +50,7 @@ namespace eSalesBog.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            var dbConsultant = db.Consultants.Find(id);
+            var dbConsultant = _serviceClient.GetConsultantById((int)id);
             ConsultantViewModel consultantDto = new ConsultantViewModel { FirstName = dbConsultant.FirstName, LastName = dbConsultant.LastName, PersonalNumber = dbConsultant.PersonalNumber };
             if (consultantDto == null)
             {
@@ -62,45 +62,54 @@ namespace eSalesBog.Controllers
         // GET: Consultant/Create
         public ActionResult Create()
         {
-            GetRecommenderConsultants();
+            LoadRecommenderConsultants(null);
+
             return View();
         }
 
-        // POST: Consultant/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: Consultant/Create       
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "ID,FirstName,LastName,PersonalNumber,Gender,BirthDate,RecommenderConsultantID")] ConsultantViewModel consultant)
         {
+
             if (ModelState.IsValid)
             {
-                db.Consultants.Add(new Consultants
+                if (_serviceClient.CheckIsConsultantRecommender(consultant.RecommenderConsultantID, consultant.PersonalNumber))
                 {
-                    FirstName = consultant.FirstName,
-                    LastName = consultant.LastName,
-                    BirthDate = consultant.BirthDate,
-                    PersonalNumber = consultant.PersonalNumber,
-                    Gender = consultant.Gender,
-                    RecommenderConsultantID = consultant.RecommenderConsultantID
-                });
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                    ModelState.AddModelError(string.Empty, "არჩეული რეკომენდატორი არ შეიძლება იყოს იერარქიულად ამ კონსულტანტის რეკომენდატორი");
+                }
+                else
+                {
+                    ConsultantDto c = new ConsultantDto
+                    {
+                        FirstName = consultant.FirstName,
+                        LastName = consultant.LastName,
+                        BirthDate = consultant.BirthDate,
+                        PersonalNumber = consultant.PersonalNumber,
+                        Gender = consultant.Gender,
+                        RecommenderConsultantID = consultant.RecommenderConsultantID
+                    };
+                    _serviceClient.CreateConsultant(c);
+
+                    return RedirectToAction("Index");
+                }
             }
 
+            LoadRecommenderConsultants(null);
             return View(consultant);
         }
 
         // GET: Consultant/Edit/5
         public ActionResult Edit(int? id)
         {
-            GetRecommenderConsultants();
+            LoadRecommenderConsultants(id);
 
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            var consultant = db.Consultants.Find(id);
+            var consultant = _serviceClient.GetConsultantById((int)id);
             ConsultantViewModel consultantModel = new ConsultantViewModel
             {
                 FirstName = consultant.FirstName,
@@ -118,25 +127,33 @@ namespace eSalesBog.Controllers
         }
 
         // POST: Consultant/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "ID,FirstName,LastName,PersonalNumber,Gender,BirthDate,RecommenderConsultantID")] ConsultantViewModel consultant)
         {
             if (ModelState.IsValid)
             {
-                //db.Entry(consultant).State = EntityState.Modified;
-                var dbConsultant = db.Consultants.Where(s => s.ID == consultant.ID).FirstOrDefault();
-                dbConsultant.FirstName = consultant.FirstName;
-                dbConsultant.LastName = consultant.LastName;
-                dbConsultant.Gender = consultant.Gender;
-                dbConsultant.BirthDate = consultant.BirthDate;
-                dbConsultant.RecommenderConsultantID = consultant.RecommenderConsultantID;
-                dbConsultant.PersonalNumber = consultant.PersonalNumber;
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                if (_serviceClient.CheckIsConsultantRecommender(consultant.RecommenderConsultantID, consultant.PersonalNumber))
+                {
+                    ModelState.AddModelError(string.Empty, "არჩეული რეკომენდატორი არ შეიძლება იყოს იერარქიულად ამ კონსულტანტის რეკომენდატორი");
+                }
+                else
+                {
+                    ConsultantDto c = new ConsultantDto
+                    {
+                        ID = consultant.ID,
+                        FirstName = consultant.FirstName,
+                        LastName = consultant.LastName,
+                        BirthDate = consultant.BirthDate,
+                        PersonalNumber = consultant.PersonalNumber,
+                        Gender = consultant.Gender,
+                        RecommenderConsultantID = consultant.RecommenderConsultantID
+                    };
+                    _serviceClient.EditConultant(c);
+                    return RedirectToAction("Index");
+                }
             }
+            LoadRecommenderConsultants(null);
             return View(consultant);
         }
 
@@ -148,7 +165,7 @@ namespace eSalesBog.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
-            var consultant = db.Consultants.Find(id);
+            var consultant = _serviceClient.GetConsultantById((int)id);
             ConsultantViewModel consultantModel = new ConsultantViewModel
             {
                 FirstName = consultant.FirstName,
@@ -158,7 +175,7 @@ namespace eSalesBog.Controllers
                 Gender = consultant.Gender,
                 RecommenderConsultantID = consultant.RecommenderConsultantID
             };
-           
+
             if (consultantModel == null)
             {
                 return HttpNotFound();
@@ -171,26 +188,15 @@ namespace eSalesBog.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Consultants consultant =  db.Consultants.Find(id);
-            db.Consultants.Remove(consultant);
-            db.SaveChanges();
+            _serviceClient.DeleteConsultant(id);
             return RedirectToAction("Index");
         }
 
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                db.Dispose();
-            }
-            base.Dispose(disposing);
-        }
 
-        public void GetRecommenderConsultants()
+        public void LoadRecommenderConsultants(int? id)
         {
-            List<ConsultantViewModel> result1 = new List<ConsultantViewModel>();
+            var dbConsultants = _serviceClient.GetConsultants();
 
-            var dbConsultants = db.Consultants.ToList();
             List<SelectListItem> consultants = new List<SelectListItem>();
             foreach (var item in dbConsultants)
             {
@@ -200,8 +206,6 @@ namespace eSalesBog.Controllers
                     Text = item.PersonalNumber + " " + item.FirstName + " " + item.LastName
                 });
             }
-
-
             ViewData["RecommenderConsultants"] = consultants;
 
         }
