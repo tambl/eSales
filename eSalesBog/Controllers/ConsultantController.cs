@@ -112,6 +112,7 @@ namespace eSalesBog.Controllers
             var consultant = _serviceClient.GetConsultantById((int)id);
             ConsultantViewModel consultantModel = new ConsultantViewModel
             {
+                ID=consultant.ID,
                 FirstName = consultant.FirstName,
                 LastName = consultant.LastName,
                 BirthDate = consultant.BirthDate,

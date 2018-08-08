@@ -245,6 +245,7 @@
     <Compile Include="Controllers\ConsultantController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
+    <Compile Include="Controllers\ProductController.cs" />
     <Compile Include="Controllers\SalesController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -661,10 +662,14 @@
     <Content Include="Views\Consultant\Create.cshtml" />
     <Content Include="Views\Consultant\Delete.cshtml" />
     <Content Include="Views\Consultant\Details.cshtml" />
+    <Content Include="Views\Product\Create.cshtml" />
+    <Content Include="Views\Product\Delete.cshtml" />
+    <Content Include="Views\Product\Details.cshtml" />
+    <Content Include="Views\Product\Edit.cshtml" />
+    <Content Include="Views\Product\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Views\Product\" />
     <Folder Include="Views\Sales\" />
   </ItemGroup>
   <ItemGroup>
@@ -679,6 +684,10 @@
     <ProjectReference Include="..\Common\Common.csproj">
       <Project>{7b46b51a-9e85-4330-84b0-1b3eb6db6cd8}</Project>
       <Name>Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DAL\DAL.csproj">
+      <Project>{a23abe4e-c7d6-416e-a4c6-8befd81b8e94}</Project>
+      <Name>DAL</Name>
     </ProjectReference>
     <ProjectReference Include="..\Services\Services.csproj">
       <Project>{92FFDE1D-DAD1-43DC-891C-765B44DE7521}</Project>

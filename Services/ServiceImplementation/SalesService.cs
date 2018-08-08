@@ -56,7 +56,8 @@ namespace Services.ServiceImplementation
             using (var dbContext = new SalesBogEntities())
             {
                 var dbConsultant = dbContext.Consultants.Find(id);
-                ConsultantDto consultantDto = new ConsultantDto {
+                ConsultantDto consultantDto = new ConsultantDto
+                {
                     ID = dbConsultant.ID,
                     FirstName = dbConsultant.FirstName,
                     LastName = dbConsultant.LastName,
@@ -110,6 +111,78 @@ namespace Services.ServiceImplementation
 
                 }
                 return false;
+            }
+        }
+        #endregion
+
+        #region Products
+        public List<ProductDto> GetProducts()
+        {
+            using (var dbContext = new SalesBogEntities())
+            {
+                var dbProducts = dbContext.Products.ToList();
+                List<ProductDto> data = new List<ProductDto>();
+                foreach (var item in dbProducts)
+                {
+                    data.Add(new ProductDto
+                    {
+                        ID = item.ID,
+                        Price = (decimal)item.Price,
+                        ProductCode = item.ProductCode,
+                        ProductName = item.ProductName
+
+                    });
+                }
+                return data;
+            }
+        }
+        public bool CreateProduct(ProductDto product)
+        {
+            using (var dbContext = new SalesBogEntities())
+            {
+                dbContext.Products.Add(new Products
+                {
+                    Price = product.Price,
+                    ProductCode = product.ProductCode,
+                    ProductName = product.ProductName
+                });
+                return dbContext.SaveChanges() > 0 ? true : false;
+
+            }
+        }
+        public ProductDto GetProductById(int id)
+        {
+            using (var dbContext = new SalesBogEntities())
+            {
+                var dbProduct = dbContext.Products.Find(id);
+                ProductDto data = new ProductDto
+                {
+                    ID = dbProduct.ID,
+                    Price = (decimal)dbProduct.Price,
+                    ProductName = dbProduct.ProductName,
+                    ProductCode = dbProduct.ProductCode
+                };
+                return data;
+            }
+        }
+        public bool EditProduct(ProductDto product)
+        {
+            using (var dbContext = new SalesBogEntities())
+            {
+                var dbProduct = dbContext.Products.Where(s => s.ID == product.ID).FirstOrDefault();
+                dbProduct.Price = product.Price;
+                dbProduct.ProductCode = product.ProductCode;
+                dbProduct.ProductName = product.ProductName;
+                return dbContext.SaveChanges() > 0 ? true : false;
+            }
+        }
+        public bool DeleteProduct(int id)
+        {
+            using (var dbContext = new SalesBogEntities())
+            {
+                Products prod = dbContext.Products.Find(id);
+                dbContext.Products.Remove(prod);
+                return dbContext.SaveChanges() > 0 ? true : false;
             }
         }
         #endregion
