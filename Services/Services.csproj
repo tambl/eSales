@@ -60,6 +60,7 @@
   <ItemGroup>
     <Compile Include="DTOs\ConsultantDto.cs" />
     <Compile Include="DTOs\ProductDto.cs" />
+    <Compile Include="DTOs\ProductSalesDto.cs" />
     <Compile Include="DTOs\SalesDto.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServiceAbstract\ISalesService.cs" />

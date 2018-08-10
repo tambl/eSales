@@ -13,7 +13,7 @@ namespace Services.DTOs
         public int ConsultantID { get; set; }
         public int? ProductID { get; set; }
         public string SaleDescription { get; set; }
-        public List<ConsultantDto> Consultants { get; set; }
+        public ConsultantDto Consultant { get; set; }
         public List<ProductDto> Products { get; set; }
     }
 }

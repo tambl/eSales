@@ -16,7 +16,7 @@ namespace eSalesBog.Models
             [Display(Name = "გვარი")]
             public string LastName { get; set; }
             [Display(Name = "პირადობის ნომერი")]
-            [MaxLength(11,ErrorMessage ="მაქს 11 ნიშნა")]
+            [MaxLength(11, ErrorMessage = "მაქს 11 ნიშნა")]
             public string PersonalNumber { get; set; }
             [Display(Name = "სქესი")]
             public int? Gender { get; set; }
@@ -24,7 +24,7 @@ namespace eSalesBog.Models
             public DateTime? BirthDate { get; set; }
             [Display(Name = "რეკომენდატორი")]
             public int? RecommenderConsultantID { get; set; }
-            //public List<ConsultantViewModel> RecommenderConsultant { get; set; }
+            public List<ConsultantViewModel> RecommenderConsultant { get; set; }
         }
 
         public class ProductViewModel
@@ -37,23 +37,20 @@ namespace eSalesBog.Models
             public string ProductName { get; set; }
             [Display(Name = "ფასი")]
             public decimal Price { get; set; }
-        }
 
-        public class SalesViewModel
+            public bool IsDeleted { get; set; }
+            public int ProductCount{ get; set; }
+    }
+
+        public class ProductSalesViewModel
         {
             public int ID { get; set; }
+            public int ProductID { get; set; }
+            public int SalesID { get; set; }
 
-            [Display(Name = "გაყიდვის დრო")]
-            public DateTime? SaleDate { get; set; }
-            [Display(Name = "კონსულტანტი")]
-            public int ConsultantID { get; set; }
-            [Display(Name = "პროდუქტი")]
-            public int? ProductID { get; set; }
-            [Display(Name = "აღწერა")]
-            public string SaleDescription { get; set; }
-
-            public List<ConsultantViewModel> Consultants { get; set; }
-            public List<ProductViewModel> Products { get; set; }
+            public int ProductCount { get; set; }
         }
+
+
     }
 }

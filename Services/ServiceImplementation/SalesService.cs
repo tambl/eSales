@@ -186,5 +186,62 @@ namespace Services.ServiceImplementation
             }
         }
         #endregion
+
+
+        #region Sales
+        public List<SalesDto> GetSales()
+        {
+            using (var dbContext = new SalesBogEntities())
+            {
+                var dbSales = dbContext.Sales.ToList();
+                List<SalesDto> sales = new List<SalesDto>();
+                foreach (var item in dbSales)
+                {
+                    sales.Add(new SalesDto
+                    {
+                        ID = item.ID,
+                        SaleDate = item.SaleDate,
+                        SaleDescription = item.SaleDescription,
+                        ConsultantID = (int)item.ConsultantID,
+                        Products = item.ProductSales.Select(
+                            s => new ProductDto
+                            {
+                                ID = s.Products.ID,
+                                Price = (decimal)s.Products.Price,
+                                ProductName = s.Products.ProductName
+                            }).ToList()
+                    });
+                }
+                return sales;
+            }
+        }
+        public bool CreateSale(SalesDto sale)
+        {
+            using (var dbContext = new SalesBogEntities())
+            {
+                var dbSale = new Sales
+                {
+                    ConsultantID = sale.ConsultantID,
+                    SaleDescription = sale.SaleDescription,
+                    SaleDate = DateTime.Now
+                };
+
+                var prodSales = new List<ProductSales>();
+                var products = new List<Products>();
+
+                foreach (var item in sale.Products)
+                {
+                    prodSales.Add(new ProductSales { ProductID = item.ID, Sales = dbSale, ProductCount = item.ProductCount });
+                }
+                dbContext.ProductSales.AddRange(prodSales);
+
+                return dbContext.SaveChanges() > 0 ? true : false;
+            }
+
+        }
+        //public SalesDto GetSaleById(int id){}
+        //public bool EditSales(SalesDto sale){}
+        //public bool DeleteSale(int id){}         
+        #endregion
     }
 }

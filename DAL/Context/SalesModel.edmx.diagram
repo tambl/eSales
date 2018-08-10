@@ -5,12 +5,14 @@
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
       <Diagram DiagramId="89028d353b9a41bb9bb712d9edcf7ad2" Name="Diagram1">
-        <EntityTypeShape EntityType="SalesBogModel.Consultants" Width="1.5" PointX="0.75" PointY="1" IsExpanded="true" />
-        <EntityTypeShape EntityType="SalesBogModel.Products" Width="1.5" PointX="6.875" PointY="2.875" IsExpanded="true" />
-        <EntityTypeShape EntityType="SalesBogModel.Sales" Width="1.5" PointX="3" PointY="1.25" IsExpanded="true" />
-        <AssociationConnector Association="SalesBogModel.FK_Consultants_RecommenderConsultants" ManuallyRouted="false" />
-        <AssociationConnector Association="SalesBogModel.FK_Sales_Consultants" ManuallyRouted="false" />
-        <AssociationConnector Association="SalesBogModel.FK_Sales_Products" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="SalesBogModel.Consultants" Width="1.5" PointX="0.75" PointY="1" />
+        <EntityTypeShape EntityType="SalesBogModel.Products" Width="1.5" PointX="8.25" PointY="1.25" />
+        <EntityTypeShape EntityType="SalesBogModel.ProductSales" Width="1.5" PointX="5.375" PointY="2.5" />
+        <EntityTypeShape EntityType="SalesBogModel.Sales" Width="1.5" PointX="3" PointY="1" />
+        <AssociationConnector Association="SalesBogModel.FK_Consultants_RecommenderConsultants" />
+        <AssociationConnector Association="SalesBogModel.FK_Sales_Consultants" />
+        <AssociationConnector Association="SalesBogModel.FK_ProductSales_Products" />
+        <AssociationConnector Association="SalesBogModel.FK_ProductSales_Sales" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

@@ -14,5 +14,7 @@ namespace Services.DTOs
         public string ProductName { get; set; }
 
         public decimal Price { get; set; }
+        public int ProductCount { get; set; }
+
     }
 }

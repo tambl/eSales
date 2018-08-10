@@ -57,6 +57,9 @@
     <Compile Include="Context\Products.cs">
       <DependentUpon>SalesModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Context\ProductSales.cs">
+      <DependentUpon>SalesModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Context\Sales.cs">
       <DependentUpon>SalesModel.tt</DependentUpon>
     </Compile>

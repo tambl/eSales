@@ -1,89 +1,192 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.Entity;
 using System.Linq;
+using System.Net;
 using System.Web;
 using System.Web.Mvc;
+using DAL.Context;
+using eSalesBog.Models;
+using Services.ServiceAbstract;
+using Services.DTOs;
 
 namespace eSalesBog.Controllers
 {
     public class SalesController : Controller
     {
+        private ISalesService _serviceClient;
+        public SalesController(ISalesService serviceClient)
+        {
+            _serviceClient = serviceClient;
+        }
+        private SalesBogEntities db = new SalesBogEntities();
+
         // GET: Sales
         public ActionResult Index()
         {
-            return View();
+
+            var dbSales = _serviceClient.GetSales();
+            List<SalesViewModel> sales = new List<SalesViewModel>();
+            foreach (var item in dbSales)
+            {
+                sales.Add(new SalesViewModel
+                {
+                    ID = item.ID,
+                    SaleDate = item.SaleDate,
+                    SaleDescription = item.SaleDescription,
+                    ConsultantID = (int)item.ConsultantID,
+                    ProductID = item.ProductID
+                });
+            }
+            return View(sales);
         }
 
         // GET: Sales/Details/5
-        public ActionResult Details(int id)
+        public ActionResult Details(int? id)
         {
-            return View();
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            SalesViewModel salesViewModel = null;//db.SalesViewModels.Find(id);
+            if (salesViewModel == null)
+            {
+                return HttpNotFound();
+            }
+            return View(salesViewModel);
         }
 
         // GET: Sales/Create
         public ActionResult Create()
         {
+            LoadSelectLists();
+
             return View();
         }
 
-        // POST: Sales/Create
         [HttpPost]
-        public ActionResult Create(FormCollection collection)
+        [ValidateAntiForgeryToken]
+        public ActionResult Create([Bind(Include = "ID,SaleDate,ConsultantID,ProductID,SaleDescription")] SalesViewModel model)
         {
-            try
+            if (ModelState.IsValid)
             {
-                // TODO: Add insert logic here
+                var modelProducts = new List<ProductDto>();
+                var servModel = new SalesDto
+                {
+                    ConsultantID = model.ConsultantID,
+                    SaleDescription = model.SaleDescription
+                };
+                
+                servModel.Products = model.Products.Select(a =>
+                new ProductDto
+                {
+                    ProductCount = a.ProductCount,
+                    ID = a.ID
+                }).ToList();
+
+                //var result = _serviceClient.CreateCompany(servModel);
 
                 return RedirectToAction("Index");
             }
-            catch
-            {
-                return View();
-            }
+
+            LoadSelectLists();
+
+            return View(model);
         }
 
         // GET: Sales/Edit/5
-        public ActionResult Edit(int id)
+        public ActionResult Edit(int? id)
         {
-            return View();
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            SalesViewModel salesViewModel = null;//db.SalesViewModels.Find(id);
+            if (salesViewModel == null)
+            {
+                return HttpNotFound();
+            }
+            return View(salesViewModel);
         }
 
-        // POST: Sales/Edit/5
+       
         [HttpPost]
-        public ActionResult Edit(int id, FormCollection collection)
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit([Bind(Include = "ID,SaleDate,ConsultantID,ProductID,SaleDescription")] SalesViewModel salesViewModel)
         {
-            try
+            if (ModelState.IsValid)
             {
-                // TODO: Add update logic here
-
+                db.Entry(salesViewModel).State = EntityState.Modified;
+                db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            catch
-            {
-                return View();
-            }
+            return View(salesViewModel);
         }
 
         // GET: Sales/Delete/5
-        public ActionResult Delete(int id)
+        public ActionResult Delete(int? id)
         {
-            return View();
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            SalesViewModel salesViewModel = null;//db.SalesViewModels.Find(id);
+            if (salesViewModel == null)
+            {
+                return HttpNotFound();
+            }
+            return View(salesViewModel);
         }
 
         // POST: Sales/Delete/5
-        [HttpPost]
-        public ActionResult Delete(int id, FormCollection collection)
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public ActionResult DeleteConfirmed(int id)
         {
-            try
-            {
-                // TODO: Add delete logic here
+            // SalesViewModel salesViewModel = db.SalesViewModels.Find(id);
+            //db.SalesViewModels.Remove(salesViewModel);
+            db.SaveChanges();
+            return RedirectToAction("Index");
+        }
 
-                return RedirectToAction("Index");
-            }
-            catch
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
             {
-                return View();
+                db.Dispose();
             }
+            base.Dispose(disposing);
+        }
+
+        public void LoadSelectLists()
+        {
+            var dbConsultants = _serviceClient.GetConsultants();
+
+            List<SelectListItem> consultants = new List<SelectListItem>();
+            foreach (var item in dbConsultants)
+            {
+                consultants.Add(new SelectListItem
+                {
+                    Value = item.ID.ToString(),
+                    Text = item.PersonalNumber + " " + item.FirstName + " " + item.LastName
+                });
+            }
+            var dbProducts = _serviceClient.GetProducts();
+
+            List<SelectListItem> products = new List<SelectListItem>();
+            foreach (var item in dbProducts)
+            {
+                products.Add(new SelectListItem
+                {
+                    Value = item.ID.ToString(),
+                    Text = item.ProductCode + " " + item.ProductName + " - " + item.Price
+                });
+            }
+
+            ViewData["Consultants"] = consultants;
+            ViewData["Products"] = products;
+
         }
     }
 }

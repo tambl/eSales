@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title - My ASP.NET Application</title>
+
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
 
@@ -23,8 +23,7 @@
                 <ul class="nav navbar-nav">
                     <li>@Html.ActionLink("კონსულტანტები", "Index", "Consultant")</li>
                     <li>@Html.ActionLink("პროდუქტები", "Index", "Product")</li>
-
-                    <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
+                    <li>@Html.ActionLink("გაყიდვები", "Index", "Sales")</li>
                 </ul>
                 @Html.Partial("_LoginPartial")
             </div>
@@ -34,11 +33,14 @@
         @RenderBody()
         <hr />
         <footer>
-            <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
+            <p>&copy; @DateTime.Now.Year - eSales</p>
         </footer>
     </div>
 
     @Scripts.Render("~/bundles/lib")
     @RenderSection("scripts", required: false)
+    @RenderSection("templates", required: false)
+
+
 </body>
 </html>

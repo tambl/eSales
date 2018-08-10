@@ -26,6 +26,15 @@
           <Property Name="ProductName" Type="nvarchar" MaxLength="500" />
           <Property Name="Price" Type="decimal" Precision="18" Scale="2" />
         </EntityType>
+        <EntityType Name="ProductSales">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="SaleID" Type="int" />
+          <Property Name="ProductID" Type="int" />
+          <Property Name="ProductCount" Type="int" />
+        </EntityType>
         <EntityType Name="Sales">
           <Key>
             <PropertyRef Name="ID" />
@@ -33,7 +42,6 @@
           <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="SaleDate" Type="datetime" />
           <Property Name="ConsultantID" Type="int" />
-          <Property Name="ProductID" Type="int" />
           <Property Name="SaleDescription" Type="nvarchar" MaxLength="500" />
         </EntityType>
         <Association Name="FK_Consultants_RecommenderConsultants">
@@ -48,6 +56,34 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_ProductSales_Products">
+          <End Role="Products" Type="Self.Products" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="ProductSales" Type="Self.ProductSales" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Products">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="ProductSales">
+              <PropertyRef Name="ProductID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ProductSales_Sales">
+          <End Role="Sales" Type="Self.Sales" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="ProductSales" Type="Self.ProductSales" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Sales">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="ProductSales">
+              <PropertyRef Name="SaleID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Sales_Consultants">
           <End Role="Consultants" Type="Self.Consultants" Multiplicity="0..1">
             <OnDelete Action="Cascade" />
@@ -62,34 +98,25 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_Sales_Products">
-          <End Role="Products" Type="Self.Products" Multiplicity="0..1">
-            <OnDelete Action="Cascade" />
-          </End>
-          <End Role="Sales" Type="Self.Sales" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Products">
-              <PropertyRef Name="ID" />
-            </Principal>
-            <Dependent Role="Sales">
-              <PropertyRef Name="ProductID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <EntityContainer Name="SalesBogModelStoreContainer">
           <EntitySet Name="Consultants" EntityType="Self.Consultants" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Products" EntityType="Self.Products" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ProductSales" EntityType="Self.ProductSales" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Sales" EntityType="Self.Sales" Schema="dbo" store:Type="Tables" />
           <AssociationSet Name="FK_Consultants_RecommenderConsultants" Association="Self.FK_Consultants_RecommenderConsultants">
             <End Role="Consultants" EntitySet="Consultants" />
             <End Role="Consultants1" EntitySet="Consultants" />
           </AssociationSet>
+          <AssociationSet Name="FK_ProductSales_Products" Association="Self.FK_ProductSales_Products">
+            <End Role="Products" EntitySet="Products" />
+            <End Role="ProductSales" EntitySet="ProductSales" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ProductSales_Sales" Association="Self.FK_ProductSales_Sales">
+            <End Role="Sales" EntitySet="Sales" />
+            <End Role="ProductSales" EntitySet="ProductSales" />
+          </AssociationSet>
           <AssociationSet Name="FK_Sales_Consultants" Association="Self.FK_Sales_Consultants">
             <End Role="Consultants" EntitySet="Consultants" />
-            <End Role="Sales" EntitySet="Sales" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Sales_Products" Association="Self.FK_Sales_Products">
-            <End Role="Products" EntitySet="Products" />
             <End Role="Sales" EntitySet="Sales" />
           </AssociationSet>
         </EntityContainer>
@@ -97,6 +124,28 @@
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="SalesBogModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityContainer Name="SalesBogEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Consultants" EntityType="SalesBogModel.Consultants" />
+          <EntitySet Name="Products" EntityType="SalesBogModel.Products" />
+          <EntitySet Name="ProductSales" EntityType="SalesBogModel.ProductSales" />
+          <EntitySet Name="Sales" EntityType="SalesBogModel.Sales" />
+          <AssociationSet Name="FK_Consultants_RecommenderConsultants" Association="SalesBogModel.FK_Consultants_RecommenderConsultants">
+            <End Role="Consultants" EntitySet="Consultants" />
+            <End Role="Consultants1" EntitySet="Consultants" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Sales_Consultants" Association="SalesBogModel.FK_Sales_Consultants">
+            <End Role="Consultants" EntitySet="Consultants" />
+            <End Role="Sales" EntitySet="Sales" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ProductSales_Products" Association="SalesBogModel.FK_ProductSales_Products">
+            <End Role="Products" EntitySet="Products" />
+            <End Role="ProductSales" EntitySet="ProductSales" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ProductSales_Sales" Association="SalesBogModel.FK_ProductSales_Sales">
+            <End Role="Sales" EntitySet="Sales" />
+            <End Role="ProductSales" EntitySet="ProductSales" />
+          </AssociationSet>
+        </EntityContainer>
         <EntityType Name="Consultants">
           <Key>
             <PropertyRef Name="ID" />
@@ -108,9 +157,9 @@
           <Property Name="Gender" Type="Int32" />
           <Property Name="BirthDate" Type="DateTime" Precision="3" />
           <Property Name="RecommenderConsultantID" Type="Int32" />
-          <NavigationProperty Name="Consultants1" Relationship="Self.FK_Consultants_RecommenderConsultants" FromRole="Consultants" ToRole="Consultants1" />
-          <NavigationProperty Name="Consultants2" Relationship="Self.FK_Consultants_RecommenderConsultants" FromRole="Consultants1" ToRole="Consultants" />
-          <NavigationProperty Name="Sales" Relationship="Self.FK_Sales_Consultants" FromRole="Consultants" ToRole="Sales" />
+          <NavigationProperty Name="Consultants1" Relationship="SalesBogModel.FK_Consultants_RecommenderConsultants" FromRole="Consultants" ToRole="Consultants1" />
+          <NavigationProperty Name="Consultants2" Relationship="SalesBogModel.FK_Consultants_RecommenderConsultants" FromRole="Consultants1" ToRole="Consultants" />
+          <NavigationProperty Name="Sales" Relationship="SalesBogModel.FK_Sales_Consultants" FromRole="Consultants" ToRole="Sales" />
         </EntityType>
         <EntityType Name="Products">
           <Key>
@@ -120,7 +169,18 @@
           <Property Name="ProductCode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="ProductName" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
           <Property Name="Price" Type="Decimal" Precision="18" Scale="2" />
-          <NavigationProperty Name="Sales" Relationship="Self.FK_Sales_Products" FromRole="Products" ToRole="Sales" />
+          <NavigationProperty Name="ProductSales" Relationship="SalesBogModel.FK_ProductSales_Products" FromRole="Products" ToRole="ProductSales" />
+        </EntityType>
+        <EntityType Name="ProductSales">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="SaleID" Type="Int32" />
+          <Property Name="ProductID" Type="Int32" />
+          <Property Name="ProductCount" Type="Int32" />
+          <NavigationProperty Name="Products" Relationship="SalesBogModel.FK_ProductSales_Products" FromRole="ProductSales" ToRole="Products" />
+          <NavigationProperty Name="Sales" Relationship="SalesBogModel.FK_ProductSales_Sales" FromRole="ProductSales" ToRole="Sales" />
         </EntityType>
         <EntityType Name="Sales">
           <Key>
@@ -129,14 +189,13 @@
           <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="SaleDate" Type="DateTime" Precision="3" />
           <Property Name="ConsultantID" Type="Int32" />
-          <Property Name="ProductID" Type="Int32" />
           <Property Name="SaleDescription" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="Consultants" Relationship="Self.FK_Sales_Consultants" FromRole="Sales" ToRole="Consultants" />
-          <NavigationProperty Name="Products" Relationship="Self.FK_Sales_Products" FromRole="Sales" ToRole="Products" />
+          <NavigationProperty Name="Consultants" Relationship="SalesBogModel.FK_Sales_Consultants" FromRole="Sales" ToRole="Consultants" />
+          <NavigationProperty Name="ProductSales" Relationship="SalesBogModel.FK_ProductSales_Sales" FromRole="Sales" ToRole="ProductSales" />
         </EntityType>
         <Association Name="FK_Consultants_RecommenderConsultants">
-          <End Role="Consultants" Type="Self.Consultants" Multiplicity="0..1" />
-          <End Role="Consultants1" Type="Self.Consultants" Multiplicity="*" />
+          <End Type="SalesBogModel.Consultants" Role="Consultants" Multiplicity="0..1" />
+          <End Type="SalesBogModel.Consultants" Role="Consultants1" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Consultants">
               <PropertyRef Name="ID" />
@@ -147,10 +206,10 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Sales_Consultants">
-          <End Role="Consultants" Type="Self.Consultants" Multiplicity="0..1">
+          <End Type="SalesBogModel.Consultants" Role="Consultants" Multiplicity="0..1">
             <OnDelete Action="Cascade" />
           </End>
-          <End Role="Sales" Type="Self.Sales" Multiplicity="*" />
+          <End Type="SalesBogModel.Sales" Role="Sales" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Consultants">
               <PropertyRef Name="ID" />
@@ -160,38 +219,35 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_Sales_Products">
-          <End Role="Products" Type="Self.Products" Multiplicity="0..1">
+        <Association Name="FK_ProductSales_Products">
+          <End Type="SalesBogModel.Products" Role="Products" Multiplicity="0..1">
             <OnDelete Action="Cascade" />
           </End>
-          <End Role="Sales" Type="Self.Sales" Multiplicity="*" />
+          <End Type="SalesBogModel.ProductSales" Role="ProductSales" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Products">
               <PropertyRef Name="ID" />
             </Principal>
-            <Dependent Role="Sales">
+            <Dependent Role="ProductSales">
               <PropertyRef Name="ProductID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityContainer Name="SalesBogEntities" annotation:LazyLoadingEnabled="true">
-          <EntitySet Name="Consultants" EntityType="Self.Consultants" />
-          <EntitySet Name="Products" EntityType="Self.Products" />
-          <EntitySet Name="Sales" EntityType="Self.Sales" />
-          <AssociationSet Name="FK_Consultants_RecommenderConsultants" Association="Self.FK_Consultants_RecommenderConsultants">
-            <End Role="Consultants" EntitySet="Consultants" />
-            <End Role="Consultants1" EntitySet="Consultants" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Sales_Consultants" Association="Self.FK_Sales_Consultants">
-            <End Role="Consultants" EntitySet="Consultants" />
-            <End Role="Sales" EntitySet="Sales" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Sales_Products" Association="Self.FK_Sales_Products">
-            <End Role="Products" EntitySet="Products" />
-            <End Role="Sales" EntitySet="Sales" />
-          </AssociationSet>
-        </EntityContainer>
-      </Schema>
+        <Association Name="FK_ProductSales_Sales">
+          <End Type="SalesBogModel.Sales" Role="Sales" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="SalesBogModel.ProductSales" Role="ProductSales" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Sales">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="ProductSales">
+              <PropertyRef Name="SaleID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
@@ -200,34 +256,43 @@
           <EntitySetMapping Name="Consultants">
             <EntityTypeMapping TypeName="SalesBogModel.Consultants">
               <MappingFragment StoreEntitySet="Consultants">
-                <ScalarProperty Name="ID" ColumnName="ID" />
-                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
-                <ScalarProperty Name="LastName" ColumnName="LastName" />
-                <ScalarProperty Name="PersonalNumber" ColumnName="PersonalNumber" />
-                <ScalarProperty Name="Gender" ColumnName="Gender" />
-                <ScalarProperty Name="BirthDate" ColumnName="BirthDate" />
                 <ScalarProperty Name="RecommenderConsultantID" ColumnName="RecommenderConsultantID" />
+                <ScalarProperty Name="BirthDate" ColumnName="BirthDate" />
+                <ScalarProperty Name="Gender" ColumnName="Gender" />
+                <ScalarProperty Name="PersonalNumber" ColumnName="PersonalNumber" />
+                <ScalarProperty Name="LastName" ColumnName="LastName" />
+                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Products">
             <EntityTypeMapping TypeName="SalesBogModel.Products">
               <MappingFragment StoreEntitySet="Products">
-                <ScalarProperty Name="ID" ColumnName="ID" />
-                <ScalarProperty Name="ProductCode" ColumnName="ProductCode" />
-                <ScalarProperty Name="ProductName" ColumnName="ProductName" />
                 <ScalarProperty Name="Price" ColumnName="Price" />
+                <ScalarProperty Name="ProductName" ColumnName="ProductName" />
+                <ScalarProperty Name="ProductCode" ColumnName="ProductCode" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ProductSales">
+            <EntityTypeMapping TypeName="SalesBogModel.ProductSales">
+              <MappingFragment StoreEntitySet="ProductSales">
+                <ScalarProperty Name="ProductCount" ColumnName="ProductCount" />
+                <ScalarProperty Name="ProductID" ColumnName="ProductID" />
+                <ScalarProperty Name="SaleID" ColumnName="SaleID" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Sales">
             <EntityTypeMapping TypeName="SalesBogModel.Sales">
               <MappingFragment StoreEntitySet="Sales">
-                <ScalarProperty Name="ID" ColumnName="ID" />
-                <ScalarProperty Name="SaleDate" ColumnName="SaleDate" />
-                <ScalarProperty Name="ConsultantID" ColumnName="ConsultantID" />
-                <ScalarProperty Name="ProductID" ColumnName="ProductID" />
                 <ScalarProperty Name="SaleDescription" ColumnName="SaleDescription" />
+                <ScalarProperty Name="ConsultantID" ColumnName="ConsultantID" />
+                <ScalarProperty Name="SaleDate" ColumnName="SaleDate" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

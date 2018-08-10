@@ -14,13 +14,19 @@ namespace DAL.Context
     
     public partial class Sales
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public Sales()
+        {
+            this.ProductSales = new HashSet<ProductSales>();
+        }
+    
         public int ID { get; set; }
         public Nullable<System.DateTime> SaleDate { get; set; }
         public Nullable<int> ConsultantID { get; set; }
-        public Nullable<int> ProductID { get; set; }
         public string SaleDescription { get; set; }
     
         public virtual Consultants Consultants { get; set; }
-        public virtual Products Products { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<ProductSales> ProductSales { get; set; }
     }
 }

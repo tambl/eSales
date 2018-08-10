@@ -17,7 +17,7 @@ namespace DAL.Context
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Products()
         {
-            this.Sales = new HashSet<Sales>();
+            this.ProductSales = new HashSet<ProductSales>();
         }
     
         public int ID { get; set; }
@@ -26,6 +26,6 @@ namespace DAL.Context
         public Nullable<decimal> Price { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Sales> Sales { get; set; }
+        public virtual ICollection<ProductSales> ProductSales { get; set; }
     }
 }

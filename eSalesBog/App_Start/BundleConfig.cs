@@ -16,7 +16,9 @@ namespace eSalesBog
                     "~/Scripts/respond.js",
                     "~/Scripts/DataTables/jquery.dataTables.js",
                     "~/Scripts/DataTables/dataTables.bootstrap.js",
-                    "~/Scripts/bootstrap-datepicker.js"
+                    "~/Scripts/bootstrap-datepicker.js",
+                    "~/Scripts/locales/bootstrap-datepicker.ka.min.js",
+                    "~/Scripts/jquery.unobtrusive-ajax.js"
                     ));
 
             bundles.Add(new ScriptBundle("~/bundles/jqueryval").Include(

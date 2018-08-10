@@ -24,7 +24,16 @@ namespace Services.ServiceAbstract
         bool CreateProduct(ProductDto product);
         ProductDto GetProductById(int id);
         bool EditProduct(ProductDto product);
-        bool DeleteProduct(int id); 
+        bool DeleteProduct(int id);
+        #endregion
+
+        #region Sales
+
+        List<SalesDto> GetSales();
+        //bool CreateSale(SalesDto sale);
+        //SalesDto GetSaleById(int id);
+        //bool EditSales(SalesDto sale);
+        //bool DeleteSale(int id); 
         #endregion
 
     }

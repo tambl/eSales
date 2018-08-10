@@ -1,0 +1,51 @@
+﻿@model eSalesBog.Models.SalesViewModel
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>SalesViewModel</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.SaleDate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.SaleDate)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ConsultantID)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ConsultantID)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ProductID)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ProductID)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.SaleDescription)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.SaleDescription)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.ID }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

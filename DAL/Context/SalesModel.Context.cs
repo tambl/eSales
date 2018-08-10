@@ -27,6 +27,7 @@ namespace DAL.Context
     
         public virtual DbSet<Consultants> Consultants { get; set; }
         public virtual DbSet<Products> Products { get; set; }
+        public virtual DbSet<ProductSales> ProductSales { get; set; }
         public virtual DbSet<Sales> Sales { get; set; }
     }
 }
