@@ -21,6 +21,8 @@ namespace eSalesBog.App_Start
 
             CreateMap<SalesViewModel, SalesDto>().ForMember(m => m.ID, opt => opt.Ignore());
             CreateMap<SalesDto, SalesViewModel>();
+
+            CreateMap<SaleConsultantProductsDto, SaleConsultantProductsViewModel>();
         }
     }
 }

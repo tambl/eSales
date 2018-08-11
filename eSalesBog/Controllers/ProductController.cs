@@ -6,7 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
-using DAL.Context;
+
 using Services.DTOs;
 using Services.ServiceAbstract;
 using static eSalesBog.Models.SalesViewModels;
@@ -15,7 +15,7 @@ namespace eSalesBog.Controllers
 {
     public class ProductController : Controller
     {
-        private SalesBogEntities db = new SalesBogEntities();
+        
         private ISalesService _serviceClient;
 
         public ProductController(ISalesService serviceClient)

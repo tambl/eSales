@@ -246,6 +246,7 @@
     <Compile Include="App_Start\UnityWebActivator.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\AnalyticsController.cs" />
     <Compile Include="Controllers\ConsultantController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
@@ -257,6 +258,7 @@
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
+    <Compile Include="Models\SaleConsultantProductsViewModel.cs" />
     <Compile Include="Models\SalesViewModel.cs" />
     <Compile Include="Models\SalesViewModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -544,6 +546,7 @@
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
+    <Content Include="Scripts\js\analytics.js" />
     <Content Include="Scripts\js\consultants.js" />
     <Content Include="Scripts\js\sales.js" />
     <Content Include="Scripts\locales\bootstrap-datepicker-en-CA.min.js" />
@@ -685,6 +688,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Views\Analytics\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
@@ -698,10 +702,6 @@
     <ProjectReference Include="..\Common\Common.csproj">
       <Project>{7b46b51a-9e85-4330-84b0-1b3eb6db6cd8}</Project>
       <Name>Common</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\DAL\DAL.csproj">
-      <Project>{a23abe4e-c7d6-416e-a4c6-8befd81b8e94}</Project>
-      <Name>DAL</Name>
     </ProjectReference>
     <ProjectReference Include="..\Services\Services.csproj">
       <Project>{92FFDE1D-DAD1-43DC-891C-765B44DE7521}</Project>

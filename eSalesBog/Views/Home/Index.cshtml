@@ -2,30 +2,170 @@
     ViewBag.Title = "Home Page";
 }
 
-<div class="jumbotron">
-    <h3>ASP.NET</h3>
-    <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>
-    <p><a href="http://asp.net" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
-</div>
 
 <div class="row">
-    <div class="col-md-4">
-        <h2>Getting started</h2>
-        <p>
-            ASP.NET MVC gives you a powerful, patterns-based way to build dynamic websites that
-            enables a clean separation of concerns and gives you full control over markup
-            for enjoyable, agile development.
-        </p>
-        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301865">Learn more &raquo;</a></p>
+    <div class="col-md-12">
+        <h3>გაყიდვები კონსულტანტების მიხედვით</h3>
+        <div class="form-group">
+            <div class="col col-sm-5">
+                <input type="text" class="form-control datepicker" id="startDate" name="StartDate">
+            </div>
+            <div class="col col-sm-5">
+                <input type="text" class="form-control datepicker" id="endDate" name="EndDate">
+            </div>
+            <div class="col col-sm-2">
+                <button class="btn btn-info btn-sm loadSalesByConsultants" type="button">
+                    <i class="fa fa-refresh size-18">&nbsp;ჩატვირთვა</i>
+                </button>
+            </div>
+            <table id="salesByConsultants" class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>გაყიდვის ნომერი</th>
+                        <th>გაყიდვის თარიღი</th>
+                        <th>კონსულტანტის ნომერი</th>
+                        <th>კონსულტანტის სახელი და გვარი</th>
+                        <th>კონსულტანტის პირადი ნომერი</th>
+                        <th>გაყიდული პროდუქტის ჯამური რაოდენობა</th>
+                        <th>გაყიდული პროდუქტის ჯამური თანხა</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+        <h4>გაყიდვები პროდუქციის ფასების მიხედვით</h4>
+        <div class="form-group">
+            <div class="col col-sm-3">
+                <input type="text" class="form-control datepicker" id="startDate2" name="StartDate2">
+            </div>
+            <div class="col col-sm-3">
+                <input type="text" class="form-control datepicker" id="endDate2" name="EndDate2">
+            </div>
+            <div class="col col-sm-3">
+                <input type="number" class="form-control" id="minPrice">
+            </div>
+            <div class="col col-sm-2">
+                <input type="number" class="form-control" id="maxPrice">
+            </div>
+            <div class="col col-sm-1">
+                <button class="btn btn-info btn-sm loadSalesByProductPrice" type="button">
+                    <i class="fa fa-refresh size-18">&nbsp;ჩატვირთვა</i>
+                </button>
+            </div>
+            <table id="salesByProductPrice" class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>გაყიდვის ნომერი</th>
+                        <th>გაყიდვის თარიღი</th>
+                        <th>კონსულტანტის ნომერი</th>
+                        <th>კონსულტანტის სახელი და გვარი</th>
+                        <th>კონსულტანტის პირადი ნომერი</th>
+                        <th>გაყიდული პროდუქტის რაოდენობა</th>
+
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+        <h4>კონსულტანტები ხშირად გაყიდვადი პროდუქტების მიხედვით</h4>
+        <div class="form-group">
+            <div class="col col-sm-3">
+                <input type="text" class="form-control datepicker" id="startDate3">
+            </div>
+            <div class="col col-sm-3">
+                <input type="text" class="form-control datepicker" id="endDate3">
+            </div>
+            <div class="col col-sm-3">
+                <input type="text" class="form-control" id="productCode">
+            </div>
+            <div class="col col-sm-2">
+                <input type="number" class="form-control" id="minQuantityOfProducts">
+            </div>
+            <div class="col col-sm-1">
+                <button class="btn btn-info btn-sm loadConsultantsByProductQuantity" type="button">
+                    <i class="fa fa-refresh size-18">&nbsp;ჩატვირთვა</i>
+                </button>
+            </div>
+            <table id="consultantsByProductQuantity" class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>კონსულტანტის ნომერი</th>
+                        <th>კონსულტანტის სახელი და გვარი</th>
+                        <th>კონსულტანტის პირადი ნომერი</th>
+                        <th>კონსულტანტის დაბადების თარიღი</th>
+                        <th>პროდუქტის კოდი</th>
+                        <th>გაყიდვების რაოდენობა</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+        <h4>კონსულტანტები ჯამური გაყიდვების მიხედვით</h4>
+        <div class="form-group">
+            <div class="col col-sm-5">
+                <input type="text" class="form-control datepicker" id="startDate4">
+            </div>
+            <div class="col col-sm-5">
+                <input type="text" class="form-control datepicker" id="endDate4">
+            </div>
+            <div class="col col-sm-2">
+                <button class="btn btn-info btn-sm loadConsultantsBySummedSales" type="button">
+                    <i class="fa fa-refresh size-18">&nbsp;ჩატვირთვა</i>
+                </button>
+            </div>
+            <table id="consultantsBySummedSales" class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>კონსულტანტის ნომერი</th>
+                        <th>კონსულტანტის სახელი და გვარი</th>
+                        <th>კონსულტანტის პირადი ნომერი</th>
+                        <th>კონსულტანტის დაბადების თარიღი</th>
+                        <th>საკუთარი გაყიდვების ჯამი</th>
+                        <th>მთელი იერარქიის ჯამი</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+        <h4>კონსულტანტები ყველაზე გაყიდვადი პროდუქტების მიხედვით</h4>
+        <div class="form-group row">
+            <div class="col col-sm-5">
+                <input type="text" class="form-control datepicker" id="startDate5">
+            </div>
+            <div class="col col-sm-5">
+                <input type="text" class="form-control datepicker" id="endDate5">
+            </div>
+            <div class="col col-sm-2">
+                <button class="btn btn-info btn-sm loadConsultantsByTopSoldProducts" type="button">
+                    <i class="fa fa-refresh size-18">&nbsp;ჩატვირთვა</i>
+                </button>
+            </div>
+            <table id="consultantsByTopSoldProducts" class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>კონსულტანტის ნომერი</th>
+                        <th>კონსულტანტის სახელი და გვარი</th>
+                        <th>კონსულტანტის პირადი ნომერი</th>
+                        <th>კონსულტანტის დაბადების თარიღი</th>
+                        <th>ხშირად გაყიდვადი პროდუქტის კოდი</th>
+                        <th>ხშირად გაყიდვადი პროდუქტის დასახელება</th>
+                        <th>ხშირად გაყიდვადი პროდუქტის რაოდენობა</th>
+                        <th>შემოსავლიანი პროდუქტის კოდი</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
     </div>
-    <div class="col-md-4">
-        <h2>Get more libraries</h2>
-        <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
-        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301866">Learn more &raquo;</a></p>
-    </div>
-    <div class="col-md-4">
-        <h2>Web Hosting</h2>
-        <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
-        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301867">Learn more &raquo;</a></p>
-    </div>
+
 </div>
+
+@section scripts{
+
+    <script src="~/Scripts/js/analytics.js"></script>
+
+}

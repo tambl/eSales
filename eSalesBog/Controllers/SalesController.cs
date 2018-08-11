@@ -6,7 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
-using DAL.Context;
+
 using eSalesBog.Models;
 using Services.ServiceAbstract;
 using Services.DTOs;
@@ -20,7 +20,7 @@ namespace eSalesBog.Controllers
         {
             _serviceClient = serviceClient;
         }
-        private SalesBogEntities db = new SalesBogEntities();
+   
 
         // GET: Sales
         public ActionResult Index()
@@ -117,8 +117,8 @@ namespace eSalesBog.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.Entry(salesViewModel).State = EntityState.Modified;
-                db.SaveChanges();
+                //db.Entry(salesViewModel).State = EntityState.Modified;
+                //db.SaveChanges();
                 return RedirectToAction("Index");
             }
             return View(salesViewModel);
@@ -146,7 +146,7 @@ namespace eSalesBog.Controllers
         {
             // SalesViewModel salesViewModel = db.SalesViewModels.Find(id);
             //db.SalesViewModels.Remove(salesViewModel);
-            db.SaveChanges();
+            //db.SaveChanges();
             return RedirectToAction("Index");
         }
 
@@ -154,7 +154,7 @@ namespace eSalesBog.Controllers
         {
             if (disposing)
             {
-                db.Dispose();
+                //db.Dispose();
             }
             base.Dispose(disposing);
         }

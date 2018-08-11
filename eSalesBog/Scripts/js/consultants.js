@@ -1,11 +1,8 @@
-﻿
-function initDatePicker() {
+﻿function initDatePicker() {
     $('.datepicker').datepicker({
-        format: "dd/MM/yyyy",
+        format: "mm/dd/yyyy",
         weekStart: 1,
-        language: "ka",
-        //todayHighlight: true,
-        //autoclose: true
+        language: "ka"
     });
 }
 
