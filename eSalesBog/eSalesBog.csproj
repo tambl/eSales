@@ -685,6 +685,7 @@
     <Content Include="Views\Sales\Index.cshtml" />
     <Content Include="Views\Sales\_ProductTemplate.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\Collection.cshtml" />
+    <Content Include="Views\Sales\_SaleEditor.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -40,7 +40,7 @@ namespace eSalesBog.Models
 
             public bool IsDeleted { get; set; }
             public int ProductCount{ get; set; }
-    }
+        }
 
         public class ProductSalesViewModel
         {

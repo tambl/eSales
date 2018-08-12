@@ -5,10 +5,13 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Index</h2>
+<h2>პროდუქტები</h2>
 
 <p>
-    @Html.ActionLink("Create New", "Create")
+    @*@Html.ActionLink("ახლის დამატება", "Create")*@
+    <a class="btn btn-white btn-sm" href="@Url.Action("Create", "Product")">
+        <i class="fa fa-plus"></i>&nbsp;ახლის დამატება
+    </a>
 </p>
 <table class="table">
     <tr>
@@ -36,9 +39,22 @@
             @Html.DisplayFor(modelItem => item.Price)
         </td>
         <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.ID }) |
-            @Html.ActionLink("Details", "Details", new { id=item.ID }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.ID })
+            @*@Html.ActionLink("რედაქტირება", "Edit", new { id=item.ID }) |
+            @Html.ActionLink("დათვალიერება", "Details", new { id=item.ID }) |
+            @Html.ActionLink("წაშლა", "Delete", new { id=item.ID })*@
+
+
+            <a class="btn btn-white btn-sm" href="@Url.Action("Edit", "Product", new { id = item.ID })">
+                <i class="fa fa-pencil"></i>&nbsp;რედაქტირება
+            </a>
+            |
+            <a class="btn btn-white btn-sm" href="@Url.Action("Details", "Product", new { id = item.ID })">
+                <i class="fa fa-eye"></i>&nbsp;დათვალიერება
+            </a>
+            |
+            <a class="btn btn-white btn-sm" href="@Url.Action("Delete", "Product", new { id = item.ID })">
+                <i class="fa fa-trash"></i>&nbsp;წაშლა
+            </a>
         </td>
     </tr>
 }

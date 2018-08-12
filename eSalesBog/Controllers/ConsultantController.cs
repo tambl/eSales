@@ -23,7 +23,6 @@ namespace eSalesBog.Controllers
             _serviceClient = serviceClient;
         }
 
-        // GET: Consultant
         public ActionResult Index()
         {
             var dbConsultants = _serviceClient.GetConsultants();
@@ -43,7 +42,6 @@ namespace eSalesBog.Controllers
             return View(consultants);
         }
 
-        // GET: Consultant/Details/5
         public ActionResult Details(int? id)
         {
             if (id == null)
@@ -59,7 +57,6 @@ namespace eSalesBog.Controllers
             return View(consultantDto);
         }
 
-        // GET: Consultant/Create
         public ActionResult Create()
         {
             LoadRecommenderConsultants(null);
@@ -67,7 +64,6 @@ namespace eSalesBog.Controllers
             return View();
         }
 
-        // POST: Consultant/Create       
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "ID,FirstName,LastName,PersonalNumber,Gender,BirthDate,RecommenderConsultantID")] ConsultantViewModel consultant)
@@ -100,7 +96,6 @@ namespace eSalesBog.Controllers
             return View(consultant);
         }
 
-        // GET: Consultant/Edit/5
         public ActionResult Edit(int? id)
         {
             LoadRecommenderConsultants(id);
@@ -127,7 +122,6 @@ namespace eSalesBog.Controllers
             return View(consultantModel);
         }
 
-        // POST: Consultant/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "ID,FirstName,LastName,PersonalNumber,Gender,BirthDate,RecommenderConsultantID")] ConsultantViewModel consultant)
@@ -158,7 +152,6 @@ namespace eSalesBog.Controllers
             return View(consultant);
         }
 
-        // GET: Consultant/Delete/5
         public ActionResult Delete(int? id)
         {
             if (id == null)
@@ -184,7 +177,6 @@ namespace eSalesBog.Controllers
             return View(consultantModel);
         }
 
-        // POST: Consultant/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)

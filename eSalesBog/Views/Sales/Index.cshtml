@@ -5,7 +5,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-
+<h3>გაყიდვები</h3>
 <p>
     @Html.ActionLink("ახალი გაყიდვის დამატება", "Create")
 </p>
@@ -18,7 +18,7 @@
             @Html.DisplayNameFor(model => model.ConsultantID)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.ProductID)
+            @Html.DisplayNameFor(model => model.ProductsDescription)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.SaleDescription)
@@ -32,10 +32,10 @@
             @Html.DisplayFor(modelItem => item.SaleDate)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.ConsultantID)
+            @Html.DisplayFor(modelItem => item.ConsultantDescription)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.ProductID)
+            @Html.DisplayFor(modelItem => item.ProductsDescription)
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.SaleDescription)

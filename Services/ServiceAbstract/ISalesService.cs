@@ -30,10 +30,10 @@ namespace Services.ServiceAbstract
         #region Sales
 
         List<SalesDto> GetSales();
-        //bool CreateSale(SalesDto sale);
-        //SalesDto GetSaleById(int id);
-        //bool EditSales(SalesDto sale);
-        //bool DeleteSale(int id); 
+        bool CreateSale(SalesDto sale);
+        SalesDto GetSaleById(int? id);
+        bool EditSales(SalesDto sale);
+        bool DeleteSale(int id); 
         #endregion
 
         #region Analytics

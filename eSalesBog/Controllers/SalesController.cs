@@ -6,10 +6,11 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
-
+using AutoMapper;
 using eSalesBog.Models;
 using Services.ServiceAbstract;
 using Services.DTOs;
+using System.Text;
 
 namespace eSalesBog.Controllers
 {
@@ -20,9 +21,8 @@ namespace eSalesBog.Controllers
         {
             _serviceClient = serviceClient;
         }
-   
 
-        // GET: Sales
+
         public ActionResult Index()
         {
 
@@ -36,20 +36,31 @@ namespace eSalesBog.Controllers
                     SaleDate = item.SaleDate,
                     SaleDescription = item.SaleDescription,
                     ConsultantID = (int)item.ConsultantID,
-                    ProductID = item.ProductID
+                    ConsultantDescription = item.Consultant.PersonalNumber + " - " + item.Consultant.FirstName + " " + item.Consultant.LastName,
+                    ProductID = item.ProductID,
+                    ProductsDescription = item.Products.Aggregate(new StringBuilder(), (sb, a) => sb.AppendLine(String.Join(",", a.ProductName)), sb => sb.ToString())
                 });
+
             }
             return View(sales);
         }
 
-        // GET: Sales/Details/5
         public ActionResult Details(int? id)
         {
+            LoadSelectLists();
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            SalesViewModel salesViewModel = null;//db.SalesViewModels.Find(id);
+            var dbSale = _serviceClient.GetSaleById(id);
+            SalesViewModel salesViewModel = Mapper.Map<SalesViewModel>(dbSale);
+
+
+            salesViewModel.ConsultantDescription = salesViewModel.Consultant.FirstName + " " + salesViewModel.Consultant.LastName;
+
+
+            //LoadSelectLists("Consultant", salesViewModel.Consultant.ID);
+
             if (salesViewModel == null)
             {
                 return HttpNotFound();
@@ -57,7 +68,6 @@ namespace eSalesBog.Controllers
             return View(salesViewModel);
         }
 
-        // GET: Sales/Create
         public ActionResult Create()
         {
             LoadSelectLists();
@@ -71,21 +81,31 @@ namespace eSalesBog.Controllers
         {
             if (ModelState.IsValid)
             {
-                var modelProducts = new List<ProductDto>();
-                var servModel = new SalesDto
+                List<ProductDto> products = new List<ProductDto>();
+                products.Add(new ProductDto { ID = 1, ProductCount = 10 });
+                products.Add(new ProductDto { ID = 3, ProductCount = 2 });
+                var testModel = new SalesDto
                 {
-                    ConsultantID = model.ConsultantID,
-                    SaleDescription = model.SaleDescription
+                    ConsultantID = 9,
+                    SaleDescription = "sale4",
+                    Products = products
                 };
-                
-                servModel.Products = model.Products.Select(a =>
-                new ProductDto
-                {
-                    ProductCount = a.ProductCount,
-                    ID = a.ID
-                }).ToList();
 
-                //var result = _serviceClient.CreateCompany(servModel);
+                //var modelProducts = new List<ProductDto>();
+                //var servModel = new SalesDto
+                //{
+                //    ConsultantID = model.ConsultantID,
+                //    SaleDescription = model.SaleDescription
+                //};
+
+                //servModel.Products = model.Products.Select(a =>
+                //new ProductDto
+                //{
+                //    ProductCount = a.ProductCount,
+                //    ID = a.ID
+                //}).ToList();
+
+                _serviceClient.CreateSale(testModel);
 
                 return RedirectToAction("Index");
             }
@@ -95,14 +115,16 @@ namespace eSalesBog.Controllers
             return View(model);
         }
 
-        // GET: Sales/Edit/5
         public ActionResult Edit(int? id)
         {
+            LoadSelectLists();
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            SalesViewModel salesViewModel = null;//db.SalesViewModels.Find(id);
+            var dbSale = _serviceClient.GetSaleById(id);
+            SalesViewModel salesViewModel = Mapper.Map<SalesViewModel>(dbSale);
+
             if (salesViewModel == null)
             {
                 return HttpNotFound();
@@ -110,28 +132,54 @@ namespace eSalesBog.Controllers
             return View(salesViewModel);
         }
 
-       
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "ID,SaleDate,ConsultantID,ProductID,SaleDescription")] SalesViewModel salesViewModel)
         {
             if (ModelState.IsValid)
             {
-                //db.Entry(salesViewModel).State = EntityState.Modified;
-                //db.SaveChanges();
+                //Test
+                List<ProductDto> products = new List<ProductDto>();
+                products.Add(new ProductDto { ID = 1, ProductCount = 10, IsDeleted = false });
+                //products.Add(new ProductDto { ID = 3, ProductCount = 2, IsDeleted = true });
+                products.Add(new ProductDto { ID = 2, ProductCount = 15, IsDeleted = false });
+                var c1 = new SalesDto
+                {
+                    ID = 4,
+                    ConsultantID = 9,
+                    SaleDescription = "sale4",
+                    Products = products
+                };
+
+                var prods = salesViewModel.Products.Select(s => new ProductDto
+                {
+                    ID = s.ID,
+                    IsDeleted = s.IsDeleted,
+                    ProductCount = s.ProductCount
+                }).ToList();
+
+                SalesDto c = new SalesDto
+                {
+                    ID = salesViewModel.ID,
+                    SaleDescription = salesViewModel.SaleDescription,
+                    Products = prods
+                };
+                _serviceClient.EditSales(c);
                 return RedirectToAction("Index");
             }
             return View(salesViewModel);
         }
 
-        // GET: Sales/Delete/5
         public ActionResult Delete(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            SalesViewModel salesViewModel = null;//db.SalesViewModels.Find(id);
+            var dbSale = _serviceClient.GetSaleById(id);
+            SalesViewModel salesViewModel = Mapper.Map<SalesViewModel>(dbSale);
+
             if (salesViewModel == null)
             {
                 return HttpNotFound();
@@ -139,27 +187,16 @@ namespace eSalesBog.Controllers
             return View(salesViewModel);
         }
 
-        // POST: Sales/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            // SalesViewModel salesViewModel = db.SalesViewModels.Find(id);
-            //db.SalesViewModels.Remove(salesViewModel);
-            //db.SaveChanges();
+            _serviceClient.DeleteSale(id);
+
             return RedirectToAction("Index");
         }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                //db.Dispose();
-            }
-            base.Dispose(disposing);
-        }
-
-        public void LoadSelectLists()
+       
+        public void LoadSelectLists(string selectorName = null, int? selectedItemID = null)
         {
             var dbConsultants = _serviceClient.GetConsultants();
 
@@ -169,7 +206,8 @@ namespace eSalesBog.Controllers
                 consultants.Add(new SelectListItem
                 {
                     Value = item.ID.ToString(),
-                    Text = item.PersonalNumber + " " + item.FirstName + " " + item.LastName
+                    Text = item.PersonalNumber + " " + item.FirstName + " " + item.LastName,
+                    Selected = selectedItemID != null && item.ID == selectedItemID && !string.IsNullOrEmpty(selectorName) && selectorName == "Consultant" ? true : false
                 });
             }
             var dbProducts = _serviceClient.GetProducts();
@@ -180,7 +218,8 @@ namespace eSalesBog.Controllers
                 products.Add(new SelectListItem
                 {
                     Value = item.ID.ToString(),
-                    Text = item.ProductCode + " " + item.ProductName + " - " + item.Price
+                    Text = item.ProductCode + " " + item.ProductName + " - " + item.Price,
+                    Selected = selectedItemID != null && item.ID == selectedItemID && !string.IsNullOrEmpty(selectorName) && selectorName == "Products" ? true : false
                 });
             }
 
@@ -188,5 +227,6 @@ namespace eSalesBog.Controllers
             ViewData["Products"] = products;
 
         }
+       
     }
 }

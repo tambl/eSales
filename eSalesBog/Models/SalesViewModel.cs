@@ -24,6 +24,11 @@ namespace eSalesBog.Models
         public int? ProductCount { get; set; }
         public ConsultantViewModel Consultant { get; set; }
         public List<ProductViewModel> Products { get; set; }
-       
+        [Display(Name = "პროდუქტები")]
+        public string ProductsDescription { get; set; }
+        [Display(Name = "კონსულტანტი")]
+        public string ConsultantDescription { get; set; }
+
+
     }
 }

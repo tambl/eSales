@@ -59,15 +59,15 @@
                 <a class="btn btn-white btn-sm" href="@Url.Action("Edit", "Consultant", new { id = item.ID })">
                     <i class="fa fa-pencil"></i>&nbsp;რედაქტირება
                 </a>
-                @*@Html.ActionLink("Edit", "Edit", new { id=item.ID })*@ |
+                |
                 <a class="btn btn-white btn-sm" href="@Url.Action("Details", "Consultant", new { id = item.ID })">
                     <i class="fa fa-eye"></i>&nbsp;დათვალიერება
                 </a>
-                @*@Html.ActionLink("Details", "Details", new { id=item.ID })*@ |
+                 |
                 <a class="btn btn-white btn-sm" href="@Url.Action("Delete", "Consultant", new { id = item.ID })">
                     <i class="fa fa-trash"></i>&nbsp;წაშლა
                 </a>
-                @*@Html.ActionLink("Delete", "Delete", new { id=item.ID })*@
+               
             </td>
         </tr>
     }

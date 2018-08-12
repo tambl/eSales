@@ -202,6 +202,7 @@ namespace Services.ServiceImplementation
                         SaleDate = item.SaleDate,
                         SaleDescription = item.SaleDescription,
                         ConsultantID = (int)item.ConsultantID,
+                        Consultant = new ConsultantDto {FirstName= item.Consultants.FirstName ,LastName= item.Consultants.LastName , ID=item.Consultants.ID, PersonalNumber = item.Consultants.PersonalNumber},
                         Products = item.ProductSales.Select(
                             s => new ProductDto
                             {
@@ -238,9 +239,96 @@ namespace Services.ServiceImplementation
             }
 
         }
-        //public SalesDto GetSaleById(int id){}
-        //public bool EditSales(SalesDto sale){}
-        //public bool DeleteSale(int id){}         
+        public SalesDto GetSaleById(int? id)
+        {
+            using (var dbContext = new SalesBogEntities())
+            {
+                var dbSale = dbContext.Sales.Find(id);
+                SalesDto saleDto = new SalesDto
+                {
+                    ID = dbSale.ID,
+                    Consultant = new ConsultantDto { ID = dbSale.ID, FirstName = dbSale.Consultants.FirstName, LastName = dbSale.Consultants.LastName },
+                    SaleDate = dbSale.SaleDate,
+                    SaleDescription = dbSale.SaleDescription,
+                    Products = dbSale.ProductSales.Select(s => new ProductDto
+                    {
+                        ID = s.Products.ID,
+                        Price = (decimal)s.Products.Price,
+                        ProductCode = s.Products.ProductCode,
+                        ProductName = s.Products.ProductName,
+                        ProductCount = (int)s.ProductCount
+                    }).ToList()
+                };
+                return saleDto;
+            }
+        }
+        public bool EditSales(SalesDto sale)
+        {
+            using (var dbContext = new SalesBogEntities())
+            {
+                var dbSale = dbContext.Sales.Where(w => w.ID == sale.ID).FirstOrDefault();
+
+                dbSale.SaleDescription = sale.SaleDescription;
+                dbSale.ConsultantID = sale.ConsultantID;
+
+                //Existing Products Edit
+                var existingDBProducts = dbContext.ProductSales.Where(w => w.SaleID == sale.ID).ToList();
+
+                var modelProducts = sale.Products.Where(w => w.IsDeleted == false && w.ID != 0).ToList();
+
+                var equalProducts = (from e in existingDBProducts
+                                     join m in modelProducts on e.ProductID equals m.ID
+                                     where e.SaleID == sale.ID
+                                     select e).ToList();
+
+                if (equalProducts.Count > 0)
+                {
+                    foreach (var item in equalProducts)
+                    {
+                        var correspondingProduct = modelProducts.Where(w => w.ID == item.ProductID).FirstOrDefault();
+                        item.ProductID = correspondingProduct.ID;
+                        item.ProductCount = correspondingProduct.ProductCount;
+                    }
+                }
+
+                //New Products Add
+                var newProducts = modelProducts.Where(s => !existingDBProducts.Where(w => w.SaleID == sale.ID).Select(a => a.ProductID).Contains(s.ID)).ToList();
+                if (newProducts.Count() > 0)
+                {
+                    var prodSales = new List<ProductSales>();
+                    foreach (var item in newProducts)
+                    {
+                        prodSales.Add(new ProductSales { ProductID = item.ID, Sales = dbSale, ProductCount = item.ProductCount });
+                    }
+                    dbContext.ProductSales.AddRange(prodSales);
+                }
+                // Deleted Product
+
+                var deletedProducts = sale.Products.Where(w => w.IsDeleted == true).ToList();
+                if (deletedProducts.Count() > 0)
+                {
+                    foreach (var item in deletedProducts)
+                    {
+                        var deletedItem = dbContext.ProductSales.Where(w => w.ProductID == item.ID && w.SaleID == dbSale.ID).FirstOrDefault();
+
+                        dbContext.ProductSales.Remove(deletedItem);
+                    }
+                }
+
+                return dbContext.SaveChanges() > 0 ? true : false;
+            }
+
+        }
+        public bool DeleteSale(int id){
+            using (var dbContext = new SalesBogEntities())
+            {
+                Sales sale = dbContext.Sales.Find(id);
+
+
+                dbContext.Sales.Remove(sale);
+                return dbContext.SaveChanges() > 0 ? true : false;
+            }
+        }         
         #endregion
 
         #region Analytics

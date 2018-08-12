@@ -30,7 +30,7 @@ function initSalesByConsultantsTable() {
             {
                 data: "SaleDate",
                 render: function (data) {
-                    var date = data.replace('/', '').replace('/', '').toString();
+                    var date = new Date(parseInt(data.replace('/Date(', '')));
                     return date;
                 },
                 sortable: true
@@ -73,7 +73,7 @@ function initSalesByProductPriceTable() {
             {
                 data: "SaleDate",
                 render: function (data) {
-                    var date = data.replace('/', '').replace('/', '').toString();
+                    var date = new Date(parseInt(data.replace('/Date(', '')));
                     return date;
                 },
                 sortable: true
@@ -118,10 +118,10 @@ function initConsultantsByProductQuantityTable() {
             { data: "PersonalNumber", sortable: true },
             {
                 data: "ConsultantBirthDate",
-                //render: function (data) {
-                //    var date = data.replace('/', '').replace('/', '').toString();
-                //    return date;
-                //},
+                render: function (data) {
+                    var date = dDate(parseInt(data.replace('/Date(', '')));
+                    return date;
+                },
                 sortable: true
             },
             { data: "ProductCode", sortable: true },
@@ -164,7 +164,7 @@ function initConsultantsBySummedSalesTable() {
             {
                 data: "ConsultantBirthDate",
                 render: function (data) {
-                    var date = data.replace('/', '').replace('/', '').toString();
+                    var date = new Date(parseInt(data.replace('/Date(', '')));
                     return date;
                 },
                 sortable: true
@@ -209,7 +209,7 @@ function initConsultantsByPopularProductsTable() {
             {
                 data: "ConsultantBirthDate",
                 render: function (data) {
-                    var date = data.replace('/', '').replace('/', '').toString();
+                    var date = new Date(parseInt(data.replace('/Date(', '')));
                     return date;
                 },
                 sortable: true

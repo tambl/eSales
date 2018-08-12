@@ -1,0 +1,67 @@
+﻿@model eSalesBog.Models.SalesViewModel
+
+<div class="form-group">
+    @Html.LabelFor(model => model.SaleDescription, htmlAttributes: new { @class = "control-label col-md-2" })
+    <div class="col-md-10">
+        @Html.EditorFor(model => model.SaleDescription, new { htmlAttributes = new { @class = "form-control" } })
+        @Html.ValidationMessageFor(model => model.SaleDescription, "", new { @class = "text-danger" })
+    </div>
+</div>
+<div class="form-group">
+    @Html.LabelFor(model => model.ConsultantID, htmlAttributes: new { @class = "control-label col-md-2" })
+    <div class="col-md-10">
+        @*@Html.EditorFor(model => model.ConsultantID, new { htmlAttributes = new { @class = "form-control" } })*@
+        @Html.DropDownListFor(Model => Model.ConsultantID, (List<SelectListItem>)ViewData["Consultants"], "-- აირჩიეთ --", new { @class = "form-control" })
+
+
+        @Html.ValidationMessageFor(model => model.ConsultantID, "", new { @class = "text-danger" })
+    </div>
+</div>
+
+<div class="mail-box-header p-md">
+    <h4>პროდუქტები</h4>
+</div>
+<div>
+    <div>
+        <button type="button" class="btn btn-primary m-b" id="add-product">
+            <i class="fa fa-plus-circle"></i>&nbsp; დამატება
+        </button>
+        <table id="product-table" class="table table-edit" data-ref-prop="Products">
+            <thead>
+                <tr>
+                    <th>პროდუქტი</th>
+                    <th>რაოდენობა</th>
+
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.Products != null)
+                {
+                    for (int i = 0; i < Model.Products.Count; i++)
+                    {
+                        //if (!Model.Products[i].IsDeleted)
+                        //{
+                        @*@Html.HiddenFor(a => a.Products[i].ID)*@
+                        @Html.HiddenFor(a => a.Products[i].IsDeleted)
+                        <tr>
+
+                            <td class="form-group">
+                                @Html.DropDownListFor(m => Model.Products[i].ID, ((List<SelectListItem>)ViewData["Products"]), "--აირჩიეთ--", new { @class = "form-control" })
+                            </td>
+                            <td class="form-group">@Html.TextBoxFor(m => Model.Products[i].ProductCount, new { @class = "form-control" })</td>
+                            <td>
+                                <button class="btn btn-danger btn-sm remove-product" type="button">
+                                    <i class="fa fa-minus size-18"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        //}
+                    }
+                }
+
+            </tbody>
+        </table>
+        <div class="clearfix"></div>
+    </div>
+</div>

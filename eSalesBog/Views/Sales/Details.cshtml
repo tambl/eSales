@@ -1,51 +1,83 @@
 ﻿@model eSalesBog.Models.SalesViewModel
 
 @{
-    ViewBag.Title = "Details";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Details</h2>
+<h2>დათვალიერება</h2>
 
 <div>
-    <h4>SalesViewModel</h4>
     <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.SaleDate)
-        </dt>
+    <div class="form-group">
+        @Html.LabelFor(model => model.SaleDescription, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.SaleDescription, new { htmlAttributes = new { @class = "form-control", @disabled = "disabled" } })
 
-        <dd>
-            @Html.DisplayFor(model => model.SaleDate)
-        </dd>
+            @Html.ValidationMessageFor(model => model.SaleDescription, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    <div class="form-group" >
+        @Html.LabelFor(model => model.SaleDate, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10"  style="margin-top:10px">
+            @Html.EditorFor(model => model.SaleDate, new { htmlAttributes = new { @class = "form-control", @disabled = "disabled" } })
+            @Html.ValidationMessageFor(model => model.SaleDate, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(model => model.ConsultantID, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10"   style="margin-top:10px">
+            @*@Html.EditorFor(model => model.ConsultantID, new { htmlAttributes = new { @class = "form-control" } })*@
+            @*@Html.DropDownListFor(Model => Model.ConsultantID, (List<SelectListItem>)ViewData["Consultants"], new { @class = "form-control", @disabled = "disabled" })*@
+            @Html.EditorFor(model => model.ConsultantDescription, new { htmlAttributes = new { @class = "form-control", @disabled = "disabled" } })
 
-        <dt>
-            @Html.DisplayNameFor(model => model.ConsultantID)
-        </dt>
+            @Html.ValidationMessageFor(model => model.ConsultantID, "", new { @class = "text-danger" })
+        </div>
+    </div>
 
-        <dd>
-            @Html.DisplayFor(model => model.ConsultantID)
-        </dd>
+    <div class="mail-box-header p-md">
+        <h4>პროდუქტები</h4>
+    </div>
+    <div>
+        <div>
+          
+            <table id="product-table" class="table table-edit" data-ref-prop="Products">
+                <thead>
+                    <tr>
+                        <th>პროდუქტი</th>
+                        <th>რაოდენობა</th>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.ProductID)
-        </dt>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Products != null)
+                    {
+                        for (int i = 0; i < Model.Products.Count; i++)
+                        {
+                            //if (!Model.Products[i].IsDeleted)
+                            //{
+                            @*@Html.HiddenFor(a => a.Products[i].ID)*@
+                            @Html.HiddenFor(a => a.Products[i].IsDeleted)
+                            <tr>
 
-        <dd>
-            @Html.DisplayFor(model => model.ProductID)
-        </dd>
+                                <td class="form-group">
+                                    @*@Html.DropDownListFor(m => m.Products[i].ID, ((List<SelectListItem>)ViewData["Products"]),  new { @class = "form-control", @disabled = "disabled" })*@
+                                    @Html.TextBoxFor(m => m.Products[i].ProductName, new { @class = "form-control", @disabled = "disabled" })
+                                </td>
+                                <td class="form-group">@Html.TextBoxFor(m => m.Products[i].ProductCount, new { @class = "form-control", @disabled = "disabled" })</td>
+                                
+                            </tr>
+                            //}
+                        }
+                    }
 
-        <dt>
-            @Html.DisplayNameFor(model => model.SaleDescription)
-        </dt>
+                </tbody>
+            </table>
+            <div class="clearfix"></div>
+        </div>
+    </div>
 
-        <dd>
-            @Html.DisplayFor(model => model.SaleDescription)
-        </dd>
-
-    </dl>
 </div>
 <p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.ID }) |
-    @Html.ActionLink("Back to List", "Index")
+
+    @Html.ActionLink("სიაზე დაბრუნება", "Index")
 </p>

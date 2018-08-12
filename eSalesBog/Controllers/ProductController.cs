@@ -23,7 +23,6 @@ namespace eSalesBog.Controllers
             _serviceClient = serviceClient;
         }
 
-        // GET: Product
         public ActionResult Index()
         {
             var dbProducts = _serviceClient.GetProducts();
@@ -41,7 +40,6 @@ namespace eSalesBog.Controllers
             return View(products);
         }
 
-        // GET: Product/Details/5
         public ActionResult Details(int? id)
         {
             if (id == null)
@@ -63,7 +61,6 @@ namespace eSalesBog.Controllers
             return View(productDto);
         }
 
-        // GET: Product/Create
         public ActionResult Create()
         {
             return View();
@@ -90,7 +87,6 @@ namespace eSalesBog.Controllers
             return View(product);
         }
 
-        // GET: Product/Edit/5
         public ActionResult Edit(int? id)
         {
             if (id == null)
@@ -134,7 +130,6 @@ namespace eSalesBog.Controllers
             return View(product);
         }
 
-        // GET: Product/Delete/5
         public ActionResult Delete(int? id)
         {
             if (id == null)
@@ -158,7 +153,6 @@ namespace eSalesBog.Controllers
             return View(productModel);
         }
 
-        // POST: Product/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
