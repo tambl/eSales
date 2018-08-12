@@ -36,12 +36,14 @@ namespace Services.ServiceAbstract
         //bool DeleteSale(int id); 
         #endregion
 
-
+        #region Analytics
         List<SaleConsultantProductsDto> GetSalesByConsultants(DateTime startDate, DateTime endDate);
         List<SaleConsultantProductsDto> GetSalesByProductPrice(DateTime startDate, DateTime endDate, decimal minPrice, decimal maxPrice);
         List<SaleConsultantProductsDto> GetConsultantsByProductQuantity(DateTime startDate, DateTime endDate, string productCode, decimal minQuantityOfProducts);
         List<SaleConsultantProductsDto> GetConsultantsBySummedSales(DateTime? startDate, DateTime? endDate);
+        List<SaleConsultantProductsDto> GetConsultantsByTopSoldProducts(DateTime? startDate, DateTime? endDate);
 
+        #endregion
 
     }
 }

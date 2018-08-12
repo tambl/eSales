@@ -12,6 +12,7 @@ $(document).ready(function () {
     initSalesByProductPriceTable();
     initConsultantsByProductQuantityTable();
     initConsultantsBySummedSalesTable();
+    initConsultantsByPopularProductsTable();
 });
 
 function initSalesByConsultantsTable() {
@@ -135,7 +136,7 @@ $(".loadConsultantsByProductQuantity").on("click", function () {
     var startDate = $("#startDate3").val();
     var endDate = $("#endDate3").val();
     var productCode = $("#productCode").val();
-    var minQuantityOfProducts =$("#minQuantityOfProducts").val();
+    var minQuantityOfProducts = $("#minQuantityOfProducts").val();
 
     var datatable = $("#consultantsByProductQuantity").DataTable();
 
@@ -150,7 +151,7 @@ $(".loadConsultantsByProductQuantity").on("click", function () {
 
         }
     });
-    
+
 });
 
 function initConsultantsBySummedSalesTable() {
@@ -171,7 +172,8 @@ function initConsultantsBySummedSalesTable() {
 
             { data: "Quantity", sortable: true },
             { data: "QuantityOverHierarchy", sortable: true }
-        ]
+        ],
+        order: [[5, "desc"]]
 
     });
 };
@@ -185,6 +187,55 @@ $(".loadConsultantsBySummedSales").on("click", function () {
 
     $.ajax({
         url: "/Analytics/GetConsultantsBySummedSales?startDate==" + startDate + "&endDate=" + endDate,
+        method: "GET",
+        success: function (result) {
+
+            datatable.clear();
+            datatable.rows.add(result.data);
+            datatable.draw();
+
+        }
+    });
+
+});
+
+function initConsultantsByPopularProductsTable() {
+
+    var dataTable = $("#consultantsByTopSoldProducts").DataTable({
+        columns: [
+            { data: "ConsultantID", sortable: true }
+            , { data: "FullName", sortable: true },
+            { data: "PersonalNumber", sortable: true },
+            {
+                data: "ConsultantBirthDate",
+                render: function (data) {
+                    var date = data.replace('/', '').replace('/', '').toString();
+                    return date;
+                },
+                sortable: true
+            },
+
+            { data: "TopSoldProductCode", sortable: true },
+            { data: "TopSoldProductName", sortable: true },
+        { data: "TopSoldProductTotalQuantity", sortable: true },
+        { data: "TopProfitableProductCode", sortable: true },
+        { data: "TopProfitableProductName", sortable: true },
+        { data: "TopProfitableProductTotalAmount", sortable: true }
+        ],
+        order:[[9,"desc"]]
+
+    });
+};
+
+$(".loadConsultantsByTopSoldProducts").on("click", function () {
+
+    var startDate = $("#startDate5").val() ? $("#startDate5").val() : null;
+    var endDate = $("#endDate5").val() ? $("#endDate5").val() : null;
+
+    var datatable = $("#consultantsByTopSoldProducts").DataTable();
+
+    $.ajax({
+        url: "/Analytics/GetConsultantsByTopSoldProducts?startDate==" + startDate + "&endDate=" + endDate,
         method: "GET",
         success: function (result) {
 

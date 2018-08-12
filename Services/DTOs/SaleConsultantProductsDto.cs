@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Services.DTOs
 {
-   public class SaleConsultantProductsDto
+    public class SaleConsultantProductsDto
     {
 
         public int SaleID { get; set; }
@@ -20,6 +20,11 @@ namespace Services.DTOs
         public decimal? SumAmount { get; set; }
         public int? QuantityOverHierarchy { get; set; }
 
-
+        public string TopSoldProductCode { get; set; }
+        public string TopSoldProductName { get; set; }
+        public int TopSoldProductTotalQuantity { get; set; }
+        public string TopProfitableProductCode { get; set; }
+        public string TopProfitableProductName { get; set; }
+        public decimal TopProfitableProductTotalAmount { get; set; }
     }
 }

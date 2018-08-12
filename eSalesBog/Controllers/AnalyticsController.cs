@@ -54,5 +54,14 @@ namespace eSalesBog.Controllers
               JsonRequestBehavior.AllowGet);
             return json;
         }
+
+        public ActionResult GetConsultantsByTopSoldProducts(DateTime? startDate, DateTime? endDate)
+        {
+            var a = Mapper.Map<List<SaleConsultantProductsViewModel>>(_serviceClient.GetConsultantsByTopSoldProducts(startDate, endDate));
+
+            var json = Json(new { data = a },
+              JsonRequestBehavior.AllowGet);
+            return json;
+        }
     }
 }

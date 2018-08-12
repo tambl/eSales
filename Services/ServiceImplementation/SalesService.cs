@@ -341,12 +341,12 @@ namespace Services.ServiceImplementation
                                                     endDate == null && startDate != null ? sl.SaleDate >= startDate :
                                                     startDate != null && endDate != null ? sl.SaleDate >= startDate && sl.SaleDate < endDate : 1 == 1
                                                 group sl by new { c.ID } into g
-                                                select new { g.Key.ID, Count = g.Distinct().Count(p => p.ID != null) }).ToDictionary(kvp => kvp.ID, kvp => kvp.Count);
+                                                select new { g.Key.ID, Count = g.Distinct().Count(p => p.ID != null) }).ToDictionary(d => d.ID, d => d.Count);
 
 
                 foreach (var consultant in consultants)
                 {
-                    IEnumerable<Consultants> allNodes = Traverse(consultant, node => node.Consultants1);
+                    IEnumerable<Consultants> allNodes = TraverseHierarchy(consultant, node => node.Consultants1);
 
                     var ids = allNodes.Select(s => s.ID);
 
@@ -361,16 +361,16 @@ namespace Services.ServiceImplementation
                                    startDate != null && endDate != null ? sl.SaleDate >= startDate && sl.SaleDate < endDate : 1 == 1
                                    && ids.Contains(c.ID)
                                group sl by new { c.ID } into g
-                               select new { g.Key.ID, Count = g.Distinct().Count(p => p.ID != null) }).Sum(q=>q.Count);
+                               select new { g.Key.ID, Count = g.Distinct().Count(p => p.ID != null) }).Sum(q => q.Count);
 
                     consultantHierarchySums.Add(consultant.ID, res);
                 }
 
-                
+
                 var result = (from c in consultants
                               join k in consultantHierarchySums on c.ID equals k.Key
                               join s in allConsultantOwnSaleSums on c.ID equals s.Key
-                              group new { k, s } by new { c.ID , c.BirthDate, c.PersonalNumber, FullName = c.FirstName+" "+ c.LastName} into g2
+                              group new { k, s } by new { c.ID, c.BirthDate, c.PersonalNumber, FullName = c.FirstName + " " + c.LastName } into g2
                               select new SaleConsultantProductsDto
                               {
                                   ConsultantBirthDate = (DateTime)g2.Key.BirthDate,
@@ -379,13 +379,88 @@ namespace Services.ServiceImplementation
                                   FullName = g2.Key.FullName,
                                   Quantity = g2.Sum(q => q.s.Value),
                                   QuantityOverHierarchy = g2.Sum(q => q.k.Value)
-                              }).ToList();
+                              }).OrderByDescending(o => o.QuantityOverHierarchy).ToList();
                 return result;
             }
         }
-              
+        public List<SaleConsultantProductsDto> GetConsultantsByTopSoldProducts(DateTime? startDate, DateTime? endDate)
+        {
+            using (var dbContext = new SalesBogEntities())
+            {
+                var consultants = dbContext.Consultants.ToList();
+                var products = dbContext.Products.ToList();
 
-        public static IEnumerable<T> Traverse<T>(T item, Func<T, IEnumerable<T>> childSelector)
+                List<ConsultantSale> allConsultantsTopSales = new List<ConsultantSale>();
+                List<ConsultantSale> allConsultantsTopProfitableSales = new List<ConsultantSale>();
+
+
+                foreach (var consultant in consultants)
+                {
+                    var consultantTopSale = (from c in dbContext.Consultants
+                                             join s in dbContext.Sales on c.ID equals s.ConsultantID into sf
+                                             from sl in sf.DefaultIfEmpty()
+                                             join sp in dbContext.ProductSales on sl.ID equals sp.SaleID into spf
+                                             from spl in spf.DefaultIfEmpty()
+                                             where
+                                                  startDate == null && endDate != null ? sl.SaleDate < endDate :
+                                                 endDate == null && startDate != null ? sl.SaleDate >= startDate :
+                                                 startDate != null && endDate != null ? sl.SaleDate >= startDate && sl.SaleDate < endDate : 1 == 1
+                                                 && c.ID == consultant.ID
+                                             group sl by new { c.ID, spl.ProductID } into g
+                                             select new ConsultantSale { ConsultantID = g.Key.ID, ProductID = g.Key.ProductID, MaxValue = g.Distinct().Count(p => p.ID != null) }).OrderByDescending(d => d.MaxValue).FirstOrDefault();
+
+                    var consultantTopProfitableSale = (from c in dbContext.Consultants
+                                                       join s in dbContext.Sales on c.ID equals s.ConsultantID into sf
+                                                       from sl in sf.DefaultIfEmpty()
+                                                       join sp in dbContext.ProductSales on sl.ID equals sp.SaleID into spf
+                                                       from spl in spf.DefaultIfEmpty()
+                                                       where
+                                                            startDate == null && endDate != null ? sl.SaleDate < endDate :
+                                                           endDate == null && startDate != null ? sl.SaleDate >= startDate :
+                                                           startDate != null && endDate != null ? sl.SaleDate >= startDate && sl.SaleDate < endDate : 1 == 1
+                                                           && c.ID == consultant.ID
+                                                       group spl by new { c.ID, spl.ProductID } into g
+                                                       select new ConsultantSale { ConsultantID = g.Key.ID, ProductID = g.Key.ProductID, MaxValue = g.Sum(s => s.ProductCount * s.Products.Price) }).OrderByDescending(d => d.MaxValue).FirstOrDefault();
+
+
+                    allConsultantsTopSales.Add(consultantTopSale);
+                    allConsultantsTopProfitableSales.Add(consultantTopProfitableSale);
+                }
+
+
+                var result = (from c in consultants
+                              join k in allConsultantsTopSales on c.ID equals k.ConsultantID
+                              join s in allConsultantsTopProfitableSales on c.ID equals s.ConsultantID
+                              join p1 in products on k.ProductID equals p1.ID
+                              join p2 in products on s.ProductID equals p2.ID
+                              group new { k, s } by new
+                              {
+                                  c.ID,
+                                  c.BirthDate,
+                                  c.PersonalNumber,
+                                  FullName = c.FirstName + " " + c.LastName,
+                                  TopCode = p1.ProductCode,
+                                  TopName = p1.ProductName,
+                                  ProfitableCode = p2.ProductCode,
+                                  ProfitableName = p2.ProductName
+                              } into g2
+                              select new SaleConsultantProductsDto
+                              {
+                                  ConsultantBirthDate = (DateTime)g2.Key.BirthDate,
+                                  ConsultantID = (int)g2.Key.ID,
+                                  PersonalNumber = g2.Key.PersonalNumber,
+                                  FullName = g2.Key.FullName,
+                                  TopSoldProductCode = g2.Key.TopCode,
+                                  TopSoldProductName = g2.Key.TopName,
+                                  TopSoldProductTotalQuantity = (int)g2.Sum(s => s.k.MaxValue),
+                                  TopProfitableProductCode = g2.Key.ProfitableCode,
+                                  TopProfitableProductName = g2.Key.ProfitableName,
+                                  TopProfitableProductTotalAmount = (decimal)g2.Sum(s => s.s.MaxValue)
+                              }).OrderByDescending(o => o.TopProfitableProductTotalAmount).ToList();
+                return result;
+            }
+        }
+        public static IEnumerable<T> TraverseHierarchy<T>(T item, Func<T, IEnumerable<T>> childSelector)
         {
             var stack = new Stack<T>();
             stack.Push(item);
@@ -403,7 +478,8 @@ namespace Services.ServiceImplementation
 
     public class ConsultantSale
     {
-        public int Key { get; set; }
-        public int Value { get; set; }
+        public int ConsultantID { get; set; }
+        public int? ProductID { get; set; }
+        public decimal? MaxValue { get; set; }
     }
 }
