@@ -329,8 +329,7 @@ namespace Services.ServiceImplementation
             {
                 var consultants = dbContext.Consultants.ToList();
 
-
-                GetConsultantsHierarchy(1, null, null);
+                Dictionary<int, int> consultantHierarchySums = new Dictionary<int, int>();
 
                 var allConsultantOwnSaleSums = (from c in dbContext.Consultants
                                                 join s in dbContext.Sales on c.ID equals s.ConsultantID into sf
@@ -344,60 +343,67 @@ namespace Services.ServiceImplementation
                                                 group sl by new { c.ID } into g
                                                 select new { g.Key.ID, Count = g.Distinct().Count(p => p.ID != null) }).ToDictionary(kvp => kvp.ID, kvp => kvp.Count);
 
-                Dictionary<int, int> consultantHierarchySums = new Dictionary<int, int>();
-                consultantHierarchySums.Add(1, 9);
 
-
-                foreach (var item in allConsultantOwnSaleSums)
+                foreach (var consultant in consultants)
                 {
-                    consultantHierarchySums.Add(GetConsultantsHierarchy(item.Key, startDate, endDate));
+                    IEnumerable<Consultants> allNodes = Traverse(consultant, node => node.Consultants1);
+
+                    var ids = allNodes.Select(s => s.ID);
+
+                    var res = (from c in dbContext.Consultants
+                               join s in dbContext.Sales on c.ID equals s.ConsultantID into sf
+                               from sl in sf.DefaultIfEmpty()
+                               join sp in dbContext.ProductSales on sl.ID equals sp.SaleID into spf
+                               from spl in spf.DefaultIfEmpty()
+                               where
+                                    startDate == null && endDate != null ? sl.SaleDate < endDate :
+                                   endDate == null && startDate != null ? sl.SaleDate >= startDate :
+                                   startDate != null && endDate != null ? sl.SaleDate >= startDate && sl.SaleDate < endDate : 1 == 1
+                                   && ids.Contains(c.ID)
+                               group sl by new { c.ID } into g
+                               select new { g.Key.ID, Count = g.Distinct().Count(p => p.ID != null) }).Sum(q=>q.Count);
+
+                    consultantHierarchySums.Add(consultant.ID, res);
                 }
 
-                var all = allConsultantOwnSaleSums.Union(consultantHierarchySums).GroupBy(g => g.Key).Select(s => new { s.Key, Quantity = s.Sum(l => l.Value) }).ToDictionary(kvp => kvp.Key, kvp => kvp.Quantity); ;
-
-
-                var result = (from g in consultants
-                              join k in all on g.ID equals k.Key
-                              join s in allConsultantOwnSaleSums on g.ID equals s.Key
-                              group new { k, s } by new { g.ID } into g2
+                
+                var result = (from c in consultants
+                              join k in consultantHierarchySums on c.ID equals k.Key
+                              join s in allConsultantOwnSaleSums on c.ID equals s.Key
+                              group new { k, s } by new { c.ID , c.BirthDate, c.PersonalNumber, FullName = c.FirstName+" "+ c.LastName} into g2
                               select new SaleConsultantProductsDto
                               {
-                                  //ConsultantBirthDate = (DateTime)g.BirthDate,
+                                  ConsultantBirthDate = (DateTime)g2.Key.BirthDate,
                                   ConsultantID = (int)g2.Key.ID,
-                                  //PersonalNumber = g.PersonalNumber,
-                                  //FullName = g.FirstName,
+                                  PersonalNumber = g2.Key.PersonalNumber,
+                                  FullName = g2.Key.FullName,
                                   Quantity = g2.Sum(q => q.s.Value),
                                   QuantityOverHierarchy = g2.Sum(q => q.k.Value)
                               }).ToList();
                 return result;
             }
         }
+              
 
-        public Dictionary<int, int> GetConsultantsHierarchy(int consultantID, DateTime? startDate, DateTime? endDate)
+        public static IEnumerable<T> Traverse<T>(T item, Func<T, IEnumerable<T>> childSelector)
         {
-            using (var dbContext = new SalesBogEntities())
+            var stack = new Stack<T>();
+            stack.Push(item);
+            while (stack.Any())
             {
-                var 
-                var result = (from c in dbContext.Consultants
-                              join s in dbContext.Sales on c.ID equals s.ConsultantID into sf
-                              from sl in sf.DefaultIfEmpty()
-                              join sp in dbContext.ProductSales on sl.ID equals sp.SaleID into spf
-                              from spl in spf.DefaultIfEmpty()
-                              where
-                                   startDate == null && endDate != null ? sl.SaleDate < endDate :
-                                       endDate == null && startDate != null ? sl.SaleDate >= startDate :
-                                       startDate != null && endDate != null ? sl.SaleDate >= startDate && sl.SaleDate < endDate : 1 == 1
-                                && c.RecommenderConsultantID == consultantID
-                              group sl by new { c.ID } into g
-                              select new { g.Key.ID, Count = g.Distinct().Count(p => p.ID != null) }).ToDictionary(kvp => kvp.ID, kvp => kvp.Count);
-                return result;
-
-
+                var next = stack.Pop();
+                yield return next;
+                foreach (var child in childSelector(next))
+                    stack.Push(child);
             }
         }
 
-
-
         #endregion
+    }
+
+    public class ConsultantSale
+    {
+        public int Key { get; set; }
+        public int Value { get; set; }
     }
 }

@@ -5,37 +5,60 @@
 
 <div class="row">
     <div class="col-md-12">
-        <h3>გაყიდვები კონსულტანტების მიხედვით</h3>
-        <div class="form-group">
-            <div class="col col-sm-5">
-                <input type="text" class="form-control datepicker" id="startDate" name="StartDate">
+
+
+        <p style="margin-top:20px">
+            <button class="btn btn-light col-md-12" type="button" data-toggle="collapse" data-target="#collapse1" aria-expanded="false" aria-controls="collapse1">
+                გაყიდვები კონსულტანტების მიხედვით
+            </button>
+            <button class="btn btn-light col-md-12" type="button" data-toggle="collapse" data-target="#collapse2" aria-expanded="false" aria-controls="collapse2">
+                გაყიდვები პროდუქციის ფასების მიხედვით
+            </button>
+            <button class="btn btn-light col-md-12" type="button" data-toggle="collapse" data-target="#collapse3" aria-expanded="false" aria-controls="collapse3">
+                კონსულტანტები ხშირად გაყიდვადი პროდუქტების მიხედვით
+            </button>
+            <button class="btn btn-light col-md-12" type="button" data-toggle="collapse" data-target="#collapse4" aria-expanded="false" aria-controls="collapse4">
+                კონსულტანტები ჯამური გაყიდვების მიხედვით
+            </button>
+            <button class="btn btn-light col-md-12" type="button" data-toggle="collapse" data-target="#collapse5" aria-expanded="false" aria-controls="collapse5">
+                კონსულტანტები ყველაზე გაყიდვადი პროდუქტების მიხედვით
+            </button>
+        </p>
+
+        <div class="collapse" id="collapse1">
+            <h4>გაყიდვები კონსულტანტების მიხედვით</h4>
+            <div class="card card-body">
+                <div class="col col-sm-5">
+                    <input type="text" class="form-control datepicker" id="startDate" name="StartDate">
+                </div>
+                <div class="col col-sm-5">
+                    <input type="text" class="form-control datepicker" id="endDate" name="EndDate">
+                </div>
+                <div class="col col-sm-2">
+                    <button class="btn btn-info btn-sm loadSalesByConsultants" type="button">
+                        <i class="fa fa-refresh size-18">&nbsp;ჩატვირთვა</i>
+                    </button>
+                </div>
+                <table id="salesByConsultants" class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>გაყიდვის ნომერი</th>
+                            <th>გაყიდვის თარიღი</th>
+                            <th>კონსულტანტის ნომერი</th>
+                            <th>კონსულტანტის სახელი და გვარი</th>
+                            <th>კონსულტანტის პირადი ნომერი</th>
+                            <th>გაყიდული პროდუქტის ჯამური რაოდენობა</th>
+                            <th>გაყიდული პროდუქტის ჯამური თანხა</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
             </div>
-            <div class="col col-sm-5">
-                <input type="text" class="form-control datepicker" id="endDate" name="EndDate">
-            </div>
-            <div class="col col-sm-2">
-                <button class="btn btn-info btn-sm loadSalesByConsultants" type="button">
-                    <i class="fa fa-refresh size-18">&nbsp;ჩატვირთვა</i>
-                </button>
-            </div>
-            <table id="salesByConsultants" class="table table-striped">
-                <thead>
-                    <tr>
-                        <th>გაყიდვის ნომერი</th>
-                        <th>გაყიდვის თარიღი</th>
-                        <th>კონსულტანტის ნომერი</th>
-                        <th>კონსულტანტის სახელი და გვარი</th>
-                        <th>კონსულტანტის პირადი ნომერი</th>
-                        <th>გაყიდული პროდუქტის ჯამური რაოდენობა</th>
-                        <th>გაყიდული პროდუქტის ჯამური თანხა</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
         </div>
 
-        <h4>გაყიდვები პროდუქციის ფასების მიხედვით</h4>
-        <div class="form-group">
+
+        <div class="collapse" id="collapse2">
+            <h4>გაყიდვები პროდუქციის ფასების მიხედვით</h4>
             <div class="col col-sm-3">
                 <input type="text" class="form-control datepicker" id="startDate2" name="StartDate2">
             </div>
@@ -69,8 +92,8 @@
             </table>
         </div>
 
-        <h4>კონსულტანტები ხშირად გაყიდვადი პროდუქტების მიხედვით</h4>
-        <div class="form-group">
+        <div class="collapse" id="collapse3">
+            <h4>კონსულტანტები ხშირად გაყიდვადი პროდუქტების მიხედვით</h4>
             <div class="col col-sm-3">
                 <input type="text" class="form-control datepicker" id="startDate3">
             </div>
@@ -103,8 +126,9 @@
             </table>
         </div>
 
-        <h4>კონსულტანტები ჯამური გაყიდვების მიხედვით</h4>
-        <div class="form-group">
+
+        <div class="collapse" id="collapse4">
+            <h4>კონსულტანტები ჯამური გაყიდვების მიხედვით</h4>
             <div class="col col-sm-5">
                 <input type="text" class="form-control datepicker" id="startDate4">
             </div>
@@ -131,8 +155,9 @@
             </table>
         </div>
 
-        <h4>კონსულტანტები ყველაზე გაყიდვადი პროდუქტების მიხედვით</h4>
-        <div class="form-group row">
+
+        <div class="collapse" id="collapse5">
+            <h4>კონსულტანტები ყველაზე გაყიდვადი პროდუქტების მიხედვით</h4>
             <div class="col col-sm-5">
                 <input type="text" class="form-control datepicker" id="startDate5">
             </div>

@@ -135,7 +135,7 @@ $(".loadConsultantsByProductQuantity").on("click", function () {
     var startDate = $("#startDate3").val();
     var endDate = $("#endDate3").val();
     var productCode = $("#productCode").val();
-    var minQuantityOfProducts = $("#minQuantityOfProducts").val() ? $("#minQuantityOfProducts").val() : 0;
+    var minQuantityOfProducts =$("#minQuantityOfProducts").val();
 
     var datatable = $("#consultantsByProductQuantity").DataTable();
 
